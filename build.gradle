@@ -1,4 +1,7 @@
-apply plugin: 'java'
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'java'
+}
 
 group = pluginGroup
 version = pluginVersion
@@ -7,26 +10,50 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
+    jcenter()
     mavenCentral()
     maven {
         name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven {
+        name = 'gradle-plugins'
+        url = 'https://plugins.gradle.org/m2'
     }
     maven {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
 }
+configurations {
+    shadowCompile
+    compile.extendsFrom(shadowCompile)
+}
 
 dependencies {
+    compile fileTree(dir: 'libraries', include: '*.jar')
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.spigotmc:spigot-api:1.12-R0.1-SNAPSHOT'
+    shadow 'org.spongepowered:configurate-hocon:3.6.1'
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
+        filter ReplaceTokens, tokens: [version: version, pluginName: pluginName]
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow] // ***
+    relocate 'com.google',                  'net.dirtcraft.libs.com.google'
+    relocate 'com.typesafe',                'net.dirtcraft.libs.com.typesafe'
+    relocate 'ninja.leaping',               'net.dirtcraft.libs.ninja.leaping'
+    relocate 'org.checkerframework',        'net.dirtcraft.libs.org.checkerframework'
+    relocate 'org.json',                    'net.dirtcraft.libs.org.json'
+    minimize {
+        exclude(dependency('org.spongepowered:configurate-hocon:3.6.1'))
     }
 }

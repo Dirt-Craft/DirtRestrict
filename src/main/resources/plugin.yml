@@ -1,8 +1,12 @@
-name: DirtRestrict
+name: @pluginName@
 version: @version@
 main: net.dirtcraft.dirtrestrict.DirtRestrict
-prefix: DirtRestrict
-depend: [DiscordLink]
+prefix: @pluginName@
+depend: [Discord_Link]
 authors: [ShinyAfro]
 description: An item restrictin plugin created for the dirtcraft network
 website: Dirtcraft.net
+commands:
+  bannedItems:
+    description: Lists banned items
+    usage: /banneditems
