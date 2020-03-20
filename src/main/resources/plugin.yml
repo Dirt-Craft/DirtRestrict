@@ -1,0 +1,8 @@
+name: DirtRestrict
+version: @version@
+main: net.dirtcraft.dirtrestrict.DirtRestrict
+prefix: DirtRestrict
+depend: [DiscordLink]
+authors: [ShinyAfro]
+description: An item restrictin plugin created for the dirtcraft network
+website: Dirtcraft.net
