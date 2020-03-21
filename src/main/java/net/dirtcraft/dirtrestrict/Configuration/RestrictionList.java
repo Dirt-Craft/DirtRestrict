@@ -113,4 +113,8 @@ public class RestrictionList {
     public Optional<Restriction> getRestriction(ItemKey item){
         return Optional.ofNullable(restrictions.getOrDefault(item, null));
     }
+
+    public Map<ItemKey, Restriction> getRestrictions(){
+        return restrictions;
+    }
 }

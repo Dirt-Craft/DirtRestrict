@@ -26,11 +26,24 @@ public class CommandUtils {
         }
     }
 
+    public static Optional<Integer> parseInt(String s){
+        try {
+            return Optional.of(Integer.parseInt(s));
+        } catch (Exception ignored){
+            return Optional.empty();
+        }
+    }
+
     public static Optional<RestrictionType> parseType(String s){
         try {
             return Optional.of(RestrictionType.valueOf(s));
         } catch (Exception ignored){
             return Optional.empty();
         }
+    }
+
+    public static int parsePage(String s, int max){
+        Optional<Integer> i = parseInt(s);
+        return i.isPresent() && i.get() > 0 ? Math.min(i.get(), max) : 1;
     }
 }

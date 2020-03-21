@@ -36,7 +36,6 @@ public class AddRestriction implements SubCommand {
             final ItemStack hand = (((Player) sender).getItemInHand());
             material = Optional.of(hand.getType());
             b = Optional.of(hand.getData().getData());
-            return true;
         } else if(args.length == 1) {
             material = parseMaterial(args[0]);
             b = Optional.empty();
