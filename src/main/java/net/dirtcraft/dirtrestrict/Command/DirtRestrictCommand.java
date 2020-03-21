@@ -4,7 +4,6 @@ import net.dirtcraft.dirtrestrict.Command.SubCommands.AddRestriction;
 import net.dirtcraft.dirtrestrict.Command.SubCommands.EditReason;
 import net.dirtcraft.dirtrestrict.Command.SubCommands.RemoveRestriction;
 import net.dirtcraft.dirtrestrict.Command.SubCommands.ToggleRestriction;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

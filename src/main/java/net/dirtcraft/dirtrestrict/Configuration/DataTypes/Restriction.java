@@ -14,10 +14,12 @@ public class Restriction {
     @Setting private List<RestrictionType> restrictions;
 
     public Restriction(){
-
+        this.hidden = false;
+        this.reason = "";
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionType.values()));
     }
 
-    public Restriction(ItemStack item, String reason, RestrictionType... types){
+    public Restriction(String reason){
         this.hidden = false;
         this.reason = reason;
         this.restrictions = new ArrayList<>(Arrays.asList(RestrictionType.values()));

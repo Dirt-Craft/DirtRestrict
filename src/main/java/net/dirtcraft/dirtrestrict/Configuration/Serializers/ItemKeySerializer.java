@@ -16,9 +16,6 @@ public class ItemKeySerializer implements TypeSerializer<ItemKey> {
     public ItemKey deserialize(@NonNull TypeToken<?> type, @NonNull ConfigurationNode value) throws ObjectMappingException {
         final String key = value.getString();
         final boolean hasMeta = key.matches("^.+:\\d+$");
-        System.out.println("---DIRTRESTRICT---");
-        System.out.println(key);
-        System.out.println(hasMeta);
         if (hasMeta){
             final String[] splitKey = key.split(":");
             final Material material = Material.getMaterial(splitKey[0]);

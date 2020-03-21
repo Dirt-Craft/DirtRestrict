@@ -85,16 +85,8 @@ public class RestrictionList {
     }
      */
 
-    public void addBan(ItemStack item){
-        Restriction restriction = new Restriction(item, "", RestrictionType.values());
-        restrictions.put(new ItemKey(item, true), restriction);
-        byte b = 0;
-        MaterialData a = new MaterialData(Material.valueOf(item.getType().toString()), b);
-        System.out.println("---");
-        System.out.println(a);
-        System.out.println(item.getData());
-        System.out.println(item.getData().equals(a));
-        System.out.println("---");
+    public void addBan(ItemKey item){
+        restrictions.put(item, new Restriction());
     }
 
     public boolean updateBanType(ItemKey item, RestrictionType type){
@@ -113,7 +105,7 @@ public class RestrictionList {
         return true;
     }
 
-    public void revokeBan(ItemKey item, String reason){
+    public void revokeBan(ItemKey item){
         restrictions.remove(item);
         save();
     }
