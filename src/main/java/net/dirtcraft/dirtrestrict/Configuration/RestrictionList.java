@@ -1,35 +1,46 @@
 package net.dirtcraft.dirtrestrict.Configuration;
 
 import com.google.common.reflect.TypeToken;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionType;
+import net.dirtcraft.dirtrestrict.Configuration.Serializers.ItemKeySerializer;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
+@SuppressWarnings("UnstableApiUsage")
 public class RestrictionList {
-    public static final String separator = ":";
-    private HoconConfigurationLoader loader;
-    private ConfigurationNode node;
-    private Map<String, Restriction> restrictions;
     private final DirtRestrict plugin;
+    private final AtomicBoolean isDirty = new AtomicBoolean();
+    private final AtomicBoolean saving = new AtomicBoolean();
+    private final HoconConfigurationLoader loader;
+    private ConfigurationNode node;
+    private Map<ItemKey, Restriction> restrictions;
 
     public RestrictionList (DirtRestrict plugin){
         this.plugin = plugin;
         final File loc = new File(plugin.getDataFolder(), "Restrictions.hocon");
         plugin.getDataFolder().mkdirs();
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemKey.class), new ItemKeySerializer());
         loader = HoconConfigurationLoader.builder()
                 .setFile(loc)
                 .build();
         try{
             node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
-            //noinspection UnstableApiUsage
-            restrictions = node.getValue(new TypeToken<Map<String, Restriction>>(){}, new HashMap<>());
+            restrictions = node.getValue(new TypeToken<Map<ItemKey, Restriction>>(){}, new HashMap<>());
             loader.save(node);
         } catch (IOException | ObjectMappingException e){
             plugin.getLogger().log(Level.SEVERE, e.getMessage());
@@ -38,58 +49,76 @@ public class RestrictionList {
     }
 
     public void save(){
-        try {
-            //noinspection UnstableApiUsage
-            node.setValue(new TypeToken<Map<String, Restriction>>(){}, restrictions);
-            loader.save(node);
-        } catch (IOException | ObjectMappingException e){
-            plugin.getLogger().log(Level.SEVERE, e.getMessage());
-            e.printStackTrace();
-        }
+        isDirty.set(true);
+        if (saving.getAndSet(true)) return;
+        CompletableFuture.supplyAsync(()->{
+            while (true) {
+                try {
+                    node.setValue(new TypeToken<Map<ItemKey, Restriction>>() {}, restrictions);
+                    loader.save(node);
+                    isDirty.set(false);
+                    Thread.sleep(5000);
+                    if (!isDirty.get()){
+                        saving.set(false);
+                        return true;
+                    }
+                } catch (IOException | ObjectMappingException | InterruptedException e) {
+                    plugin.getLogger().log(Level.SEVERE, e.getMessage());
+                    e.printStackTrace();
+                    saving.set(false);
+                    return false;
+                }
+            }
+        });
     }
 
+    /*
     public void reload(){
         try{
-        node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
+            node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
             //noinspection UnstableApiUsage
             restrictions = node.getValue(new TypeToken<Map<String, Restriction>>(){}, new HashMap<>());
-        } catch (IOException | ObjectMappingException e){
+        } catch (IOException | ObjectMappingException e) {
             plugin.getLogger().log(Level.SEVERE, e.getMessage());
             e.printStackTrace();
         }
     }
-
-    public Optional<Restriction> getRestriction(ItemStack is){
-        return Optional.ofNullable(restrictions.getOrDefault(getEntry(is), null));
-    }
+     */
 
     public void addBan(ItemStack item){
         Restriction restriction = new Restriction(item, "", RestrictionType.values());
-        restrictions.put(restriction.getIndex(), restriction);
+        restrictions.put(new ItemKey(item, true), restriction);
+        byte b = 0;
+        MaterialData a = new MaterialData(Material.valueOf(item.getType().toString()), b);
+        System.out.println("---");
+        System.out.println(a);
+        System.out.println(item.getData());
+        System.out.println(item.getData().equals(a));
+        System.out.println("---");
     }
 
-    public boolean updateBanType(ItemStack itemStack, RestrictionType type){
-        Restriction restriction = restrictions.get(getEntry(itemStack));
+    public boolean updateBanType(ItemKey item, RestrictionType type){
+        Restriction restriction = restrictions.get(item);
         if (restriction == null) return false;
         restriction.toggleRestrictions(type);
         save();
         return true;
     }
 
-    public boolean updateBanReason(ItemStack itemStack, String reason){
-        Restriction restriction = restrictions.get(getEntry(itemStack));
+    public boolean updateBanReason(ItemKey item, String reason){
+        Restriction restriction = restrictions.get(item);
         if (restriction == null) return false;
         restriction.setReason(reason);
         save();
         return true;
     }
 
-    public void revokeBan(ItemStack itemStack, String reason){
-        restrictions.remove(getEntry(itemStack));
+    public void revokeBan(ItemKey item, String reason){
+        restrictions.remove(item);
         save();
     }
 
-    private String getEntry(ItemStack is){
-        return is.getType().name() + ":" + is.getDurability();
+    public Optional<Restriction> getRestriction(ItemKey item){
+        return Optional.ofNullable(restrictions.getOrDefault(item, null));
     }
 }

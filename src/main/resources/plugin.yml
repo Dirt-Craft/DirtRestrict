@@ -10,3 +10,6 @@ commands:
   bannedItems:
     description: Lists banned items
     usage: /banneditems
+  DirtRestrict:
+    description: Main command for modifying the banlist
+    usage: /dirtrestrict

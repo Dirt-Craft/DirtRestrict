@@ -1,39 +1,30 @@
-package net.dirtcraft.dirtrestrict.Configuration;
+package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 @ConfigSerializable
 public class Restriction {
-    @Setting private String itemType;
-    @Setting private int itemMeta;
+    @Setting private boolean hidden;
     @Setting private String reason;
     @Setting private List<RestrictionType> restrictions;
 
+    public Restriction(){
+
+    }
+
     public Restriction(ItemStack item, String reason, RestrictionType... types){
-        this.itemType = item.getType().name();
-        this.itemMeta = item.getDurability();
+        this.hidden = false;
         this.reason = reason;
-        this.restrictions = Arrays.asList(types);
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public int getItemMeta() {
-        return itemMeta;
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionType.values()));
     }
 
     public String getReason() {
         return reason;
-    }
-
-    public String getIndex(){
-        return itemType + RestrictionList.separator + itemMeta;
     }
 
     public boolean isRestricted(RestrictionType type) {
