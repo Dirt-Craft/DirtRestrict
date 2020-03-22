@@ -1,6 +1,6 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionType;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import org.bukkit.Material;
 
 import java.util.Optional;
@@ -34,9 +34,9 @@ public class CommandUtils {
         }
     }
 
-    public static Optional<RestrictionType> parseType(String s){
+    public static Optional<RestrictionTypes> parseType(String s){
         try {
-            return Optional.of(RestrictionType.valueOf(s));
+            return Optional.of(RestrictionTypes.valueOf(s));
         } catch (Exception ignored){
             return Optional.empty();
         }

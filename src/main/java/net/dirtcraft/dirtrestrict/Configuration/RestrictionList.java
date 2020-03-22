@@ -3,16 +3,13 @@ package net.dirtcraft.dirtrestrict.Configuration;
 import com.google.common.reflect.TypeToken;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionType;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.ItemKeySerializer;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,24 +69,12 @@ public class RestrictionList {
         });
     }
 
-    /*
-    public void reload(){
-        try{
-            node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
-            //noinspection UnstableApiUsage
-            restrictions = node.getValue(new TypeToken<Map<String, Restriction>>(){}, new HashMap<>());
-        } catch (IOException | ObjectMappingException e) {
-            plugin.getLogger().log(Level.SEVERE, e.getMessage());
-            e.printStackTrace();
-        }
-    }
-     */
-
     public void addBan(ItemKey item){
         restrictions.put(item, new Restriction());
+        save();
     }
 
-    public boolean updateBanType(ItemKey item, RestrictionType type){
+    public boolean updateBanType(ItemKey item, RestrictionTypes type){
         Restriction restriction = restrictions.get(item);
         if (restriction == null) return false;
         restriction.toggleRestrictions(type);
@@ -117,4 +102,21 @@ public class RestrictionList {
     public Map<ItemKey, Restriction> getRestrictions(){
         return restrictions;
     }
+
 }
+
+
+
+
+    /*
+    public void reload(){
+        try{
+            node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
+            //noinspection UnstableApiUsage
+            restrictions = node.getValue(new TypeToken<Map<String, Restriction>>(){}, new HashMap<>());
+        } catch (IOException | ObjectMappingException e) {
+            plugin.getLogger().log(Level.SEVERE, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+     */

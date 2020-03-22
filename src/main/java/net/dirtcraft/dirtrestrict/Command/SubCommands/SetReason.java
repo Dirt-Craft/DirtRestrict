@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
 
-public class EditReason implements SubCommand {
+public class SetReason implements SubCommand {
     @Override
     public String getName() {
         return "reason";

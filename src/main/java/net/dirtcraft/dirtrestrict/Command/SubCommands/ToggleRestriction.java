@@ -2,7 +2,7 @@ package net.dirtcraft.dirtrestrict.Command.SubCommands;
 
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionType;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
@@ -31,7 +31,7 @@ public class ToggleRestriction implements SubCommand {
         if (args.length < 2) return false;
         final Optional<Material> material = parseMaterial(args[0]);
         final Optional<Byte> b;
-        final Optional<RestrictionType> type;
+        final Optional<RestrictionTypes> type;
         if (args.length > 2) {
             b = parseByte(args[1]);
             type = parseType(args[2]);

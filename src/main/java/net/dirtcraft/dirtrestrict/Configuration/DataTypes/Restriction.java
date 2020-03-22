@@ -2,7 +2,6 @@ package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +15,13 @@ public class Restriction {
     public Restriction(){
         this.hidden = false;
         this.reason = "";
-        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionType.values()));
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.getTypes()));
     }
 
     public Restriction(String reason){
         this.hidden = false;
         this.reason = reason;
-        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionType.values()));
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.getTypes()));
     }
 
     public String getReason() {
@@ -33,12 +32,12 @@ public class Restriction {
         return restrictions.contains(type);
     }
 
-    public void setRestrictions(RestrictionType type, boolean value) {
+    public void setRestrictions(RestrictionTypes type, boolean value) {
         if (value) this.restrictions.add(type);
         else this.restrictions.remove(type);
     }
 
-    public void toggleRestrictions(RestrictionType type){
+    public void toggleRestrictions(RestrictionTypes type){
         setRestrictions(type, !isRestricted(type));
     }
 
