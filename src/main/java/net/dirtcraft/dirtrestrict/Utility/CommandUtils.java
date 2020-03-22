@@ -1,8 +1,12 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class CommandUtils {

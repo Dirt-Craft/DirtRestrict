@@ -10,25 +10,25 @@ import java.util.List;
 public class Restriction {
     @Setting private boolean hidden;
     @Setting private String reason;
-    @Setting private List<RestrictionType> restrictions;
+    @Setting private List<RestrictionTypes> restrictions;
 
     public Restriction(){
         this.hidden = false;
         this.reason = "";
-        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.getTypes()));
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.values()));
     }
 
     public Restriction(String reason){
         this.hidden = false;
         this.reason = reason;
-        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.getTypes()));
+        this.restrictions = new ArrayList<>(Arrays.asList(RestrictionTypes.values()));
     }
 
     public String getReason() {
         return reason;
     }
 
-    public boolean isRestricted(RestrictionType type) {
+    public boolean isRestricted(RestrictionTypes type) {
         return restrictions.contains(type);
     }
 

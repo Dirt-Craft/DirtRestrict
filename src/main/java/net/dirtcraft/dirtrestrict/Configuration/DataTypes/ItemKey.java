@@ -53,7 +53,7 @@ public class ItemKey {
         final Item item = Item.getItemById(this.item);
         final GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(item);
         String itemID = id.modId + ":" + id.name;
-        return data != null? itemID + data : itemID;
+        return data != null? itemID + ":" + data : itemID;
     }
 
     public Material getMaterial(){

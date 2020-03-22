@@ -1,9 +1,6 @@
 package net.dirtcraft.dirtrestrict.Command;
 
-import net.dirtcraft.dirtrestrict.Command.SubCommands.AddRestriction;
-import net.dirtcraft.dirtrestrict.Command.SubCommands.SetReason;
-import net.dirtcraft.dirtrestrict.Command.SubCommands.RemoveRestriction;
-import net.dirtcraft.dirtrestrict.Command.SubCommands.ToggleRestriction;
+import net.dirtcraft.dirtrestrict.Command.SubCommands.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +16,7 @@ public class DirtRestrictCommand implements CommandExecutor {
         addCommand(new RemoveRestriction());
         addCommand(new SetReason());
         addCommand(new AddRestriction());
+        addCommand(new EditRestriction());
     }
 
     private void addCommand(SubCommand command){
