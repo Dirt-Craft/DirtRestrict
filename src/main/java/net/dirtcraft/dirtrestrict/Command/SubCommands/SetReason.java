@@ -5,9 +5,11 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.dirtcraft.dirtrestrict.Utility.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
@@ -38,9 +40,14 @@ public class SetReason implements SubCommand {
         final String[] remaining = new String[args.length - i];
         System.arraycopy(args, i, remaining, 0, args.length - i );
         final String reason = String.join(" ", remaining);
+        final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
+        final boolean success = restrictions.updateBanReason(bannedItem, reason);
+        final String response = "§aBan reason of §r\"§5" + bannedItem.getName() + "§r\"§a set to §r\"§5" + reason + "§r\"";
 
-        restrictions.updateBanReason(new ItemKey(material.get(), b.orElse(null)), reason);
+        if (success) sender.sendMessage(response);
+        else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
+        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
 
-        return true;
+        return success;
     }
 }

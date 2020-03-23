@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
+import java.awt.event.TextEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ public class TextUtils {
         ArrayList<BaseComponent> arr = new ArrayList<>();
         Arrays.stream(RestrictionTypes.values())
                 .forEach(t->{
-                    TextComponent text = new TextComponent("§6" + t.getName() + " Banned: " + (restriction.isRestricted(t) ? "§4Yes" : "§2No"));
+                    TextComponent text = new TextComponent("§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Banned" : "§2Allowed"));
                     text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to toggle.")));
                     text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict toggle " + key.item + (key.data != null ? " " + key.data + " " : " ") + t));
                     arr.add(text);
@@ -47,10 +48,27 @@ public class TextUtils {
         return text;
     }
 
-    private static BaseComponent[] getMono(String s){
+    public static BaseComponent[] getMono(String s){
         BaseComponent[] arr = new BaseComponent[1];
         arr[0] = new TextComponent(s);
         return arr;
+    }
+
+    public static BaseComponent[] getLinks(ItemKey bannedItem){
+        ArrayList<BaseComponent> arr = new ArrayList<>();
+        {
+            final BaseComponent[] link = TextComponent.fromLegacyText(" §6§o[Edit]");
+            final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict edit " + bannedItem.item + (bannedItem.data == null ? "" : " " + bannedItem.data));
+            final HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to edit"));
+            Arrays.stream(link).peek(l->l.setClickEvent(edit)).peek(l->l.setHoverEvent(hover)).forEach(arr::add);
+        }
+        {
+            final BaseComponent[] link = TextComponent.fromLegacyText(" §6§o[List]");
+            final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banneditems");
+            final HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to go back to ban list"));
+            Arrays.stream(link).peek(l->l.setClickEvent(edit)).peek(l->l.setHoverEvent(hover)).forEach(arr::add);
+        }
+        return arr.toArray(new BaseComponent[0]);
     }
 
     private static String getBaseText(ItemKey item, Restriction entry, char main, char trim, char reason){
@@ -84,7 +102,7 @@ public class TextUtils {
         hover.add(new TextComponent("§cBanned Methods:"));
         AtomicInteger i = new AtomicInteger();
         Arrays.stream(RestrictionTypes.values())
-                .forEach(t->hover.add(new TextComponent((i.getAndIncrement() % 4 == 0? "\n" : "§r, ") + "§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Yes" : "§2No"))));
+                .forEach(t->hover.add(new TextComponent((i.getAndIncrement() % 4 == 0? "\n" : "§r, ") + "§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Banned" : "§2Allowed"))));
         hover.add(new TextComponent("\n§7id: " + itemKey.getUniqueIdentifier()));
         if (hasPerms) hover.add(new TextComponent("\n§3§nClick to edit this entry."));
         return hover.toArray(new BaseComponent[0]);

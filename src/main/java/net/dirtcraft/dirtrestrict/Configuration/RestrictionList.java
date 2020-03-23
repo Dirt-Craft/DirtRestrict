@@ -69,17 +69,19 @@ public class RestrictionList {
         });
     }
 
-    public void addBan(ItemKey item){
+    public boolean addBan(ItemKey item){
+        if (restrictions.containsKey(item)) return false;
         restrictions.put(item, new Restriction());
         save();
+        return true;
     }
 
-    public boolean updateBanType(ItemKey item, RestrictionTypes type){
+    public Optional<Boolean> toggleBanType(ItemKey item, RestrictionTypes type){
         Restriction restriction = restrictions.get(item);
-        if (restriction == null) return false;
-        restriction.toggleRestrictions(type);
+        if (restriction == null) return Optional.empty();
+        final boolean val = restriction.toggleRestrictions(type);
         save();
-        return true;
+        return Optional.of(val);
     }
 
     public boolean updateBanReason(ItemKey item, String reason){
@@ -90,9 +92,11 @@ public class RestrictionList {
         return true;
     }
 
-    public void revokeBan(ItemKey item){
+    public boolean revokeBan(ItemKey item){
+        if (!restrictions.containsKey(item)) return false;
         restrictions.remove(item);
         save();
+        return true;
     }
 
     public Optional<Restriction> getRestriction(ItemKey item){

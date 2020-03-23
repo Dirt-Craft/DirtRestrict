@@ -5,6 +5,11 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.dirtcraft.dirtrestrict.Utility.TextUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -45,10 +50,14 @@ public class AddRestriction implements SubCommand {
         }
 
         if ( !material.isPresent() ) return false;
-        else {
-            restrictions.addBan(new ItemKey(material.get(), b.orElse(null)));
-        }
+        final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
+        final boolean success = restrictions.addBan(bannedItem);
+        final String response = "§aAdded §r\"§5" + bannedItem.getName() +"§r\" §ato the ban list.";
 
-        return false;
+        if (success) sender.sendMessage(response);
+        else sender.sendMessage("§cThis item is already banned!");
+        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
+
+        return success;
     }
 }

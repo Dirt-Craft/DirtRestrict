@@ -5,9 +5,11 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.dirtcraft.dirtrestrict.Utility.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
@@ -37,7 +39,14 @@ public class RemoveRestriction implements SubCommand {
         } else {
             b = Optional.empty();
         }
-        restrictions.revokeBan(new ItemKey(material.get(), b.orElse(null)));
-        return true;
+        final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
+        final boolean success = restrictions.revokeBan(bannedItem);
+        final String response = "§aUnbanned §r\"§5" + bannedItem.getName() + "§r\"";
+
+        if (success) sender.sendMessage(response);
+        else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
+        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
+
+        return success;
     }
 }

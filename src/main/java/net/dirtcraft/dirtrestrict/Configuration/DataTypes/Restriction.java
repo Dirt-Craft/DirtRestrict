@@ -37,8 +37,9 @@ public class Restriction {
         else this.restrictions.remove(type);
     }
 
-    public void toggleRestrictions(RestrictionTypes type){
+    public boolean toggleRestrictions(RestrictionTypes type){
         setRestrictions(type, !isRestricted(type));
+        return isRestricted(type);
     }
 
     public void setReason(String reason) {
