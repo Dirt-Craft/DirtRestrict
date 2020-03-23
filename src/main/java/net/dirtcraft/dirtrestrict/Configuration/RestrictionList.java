@@ -6,10 +6,13 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.ItemKeySerializer;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.minecraft.item.ItemStack;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,20 +110,32 @@ public class RestrictionList {
         return restrictions;
     }
 
-}
+    public boolean isRestricted(Player player, MaterialData item, RestrictionTypes type){
+        final int itemId = item.getItemTypeId();
+        final byte meta = item.getData();
+        final ItemKey key = new ItemKey(item.getItemType(), meta);
+        System.out.println(itemId + ":" + meta);
 
-
-
-
-    /*
-    public void reload(){
-        try{
-            node = loader.load(loader.getDefaultOptions().setShouldCopyDefaults(true));
-            //noinspection UnstableApiUsage
-            restrictions = node.getValue(new TypeToken<Map<String, Restriction>>(){}, new HashMap<>());
-        } catch (IOException | ObjectMappingException e) {
-            plugin.getLogger().log(Level.SEVERE, e.getMessage());
-            e.printStackTrace();
-        }
+        Optional<Restriction> optRestriction = getRestriction(key);
+        if (!optRestriction.isPresent()) optRestriction = getRestriction(new ItemKey(item.getItemType(), null));
+        return !optRestriction.isPresent() || optRestriction.get().isRestricted(type) || hasPermission(player, key, type);
     }
-     */
+
+    private boolean hasPermission(Player player, ItemKey itemKey, RestrictionTypes type){
+        return checkPerms(player, itemKey.getUniqueIdentifier(), String.valueOf(itemKey.data), type.toString().toLowerCase());
+    }
+
+    private boolean checkPerms(Player player, String itemId, String meta, String type){
+        if (checkPerm(player, "*", meta, type)) return true;
+        if (checkPerm(player, itemId, "*", type)) return true;
+        if (checkPerm(player, itemId, meta, type)) return true;
+        return false;
+    }
+
+    private boolean checkPerm(Player player, String... check){
+        StringBuilder sb = new StringBuilder("dirtrestrict.bypass.");
+        Arrays.stream(check).forEach(sb::append);
+        return player.hasPermission(sb.toString());
+    }
+
+}
