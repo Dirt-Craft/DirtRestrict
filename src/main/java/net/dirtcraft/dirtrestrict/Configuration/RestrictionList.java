@@ -11,6 +11,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
@@ -113,11 +114,21 @@ public class RestrictionList {
     public boolean isRestricted(Player player, MaterialData item, RestrictionTypes type){
         final int itemId = item.getItemTypeId();
         final byte meta = item.getData();
-        final ItemKey key = new ItemKey(item.getItemType(), meta);
+        return isRestricted(player, itemId, meta, type);
+    }
+
+    public boolean isRestricted(Player player, Block block, RestrictionTypes type){
+        final int itemId = block.getTypeId();
+        final byte meta = block.getState().getData().getData();
+        return isRestricted(player, itemId, meta, type);
+    }
+
+    private boolean isRestricted(Player player, int itemId, Byte meta, RestrictionTypes type){
+        final ItemKey key = new ItemKey(itemId, meta);
         System.out.println(itemId + ":" + meta);
 
         Optional<Restriction> optRestriction = getRestriction(key);
-        if (!optRestriction.isPresent()) optRestriction = getRestriction(new ItemKey(item.getItemType(), null));
+        if (!optRestriction.isPresent()) optRestriction = getRestriction(new ItemKey(itemId, null));
         return !optRestriction.isPresent() || optRestriction.get().isRestricted(type) || hasPermission(player, key, type);
     }
 

@@ -1,4 +1,4 @@
-package net.dirtcraft.dirtrestrict.Handlers;
+package net.dirtcraft.dirtrestrict.Handlers.Restrictions;
 
 import org.bukkit.event.Listener;
 

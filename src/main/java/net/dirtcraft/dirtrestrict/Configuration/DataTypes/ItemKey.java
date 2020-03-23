@@ -37,6 +37,11 @@ public class ItemKey {
         this.data = data ? itemStack.getData().getData() : null;
     }
 
+    public ItemKey(int item, Byte b){
+        this.item = item;
+        this.data = b;
+    }
+
     public String getName(){
         return new net.minecraft.item.ItemStack(Item.getItemById(item), 0, data).getDisplayName();
     }
