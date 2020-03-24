@@ -51,7 +51,7 @@ public class ToggleRestriction implements SubCommand {
             return false;
         }
         final String status = success.get() ? "§4Restricted" : "§2Allowed";
-        final String response = "§aToggled §6" + type.get().getName() + "§a to " + status + " for §r\"§5" + bannedItem.getName() + "§r\"";
+        final String response = "§aToggled §6" + type.get().getName() + "§a to " + status + "§a for §r\"§5" + bannedItem.getName() + "§r\"";
 
         sender.sendMessage(response);
         if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));

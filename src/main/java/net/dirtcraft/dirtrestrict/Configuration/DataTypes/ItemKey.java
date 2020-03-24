@@ -3,6 +3,7 @@ package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
@@ -20,6 +21,11 @@ public class ItemKey {
     public ItemKey(Material material){
         this.item = material.getId();
         this.data = null;
+    }
+
+    public ItemKey(Block block){
+        this.item = block.getTypeId();
+        this.data = block.getState().getData().getData();
     }
 
     public ItemKey(Item item, Byte b){
@@ -76,5 +82,9 @@ public class ItemKey {
     @Override
     public int hashCode() {
         return Objects.hash(item, data);
+    }
+
+    public ItemKey getAll(){
+        return new ItemKey(item, null);
     }
 }

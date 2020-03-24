@@ -55,14 +55,18 @@ public class TextUtils {
     }
 
     public static BaseComponent[] getLinks(ItemKey bannedItem){
+        return getLinks(bannedItem, true, true);
+    }
+
+    public static BaseComponent[] getLinks(ItemKey bannedItem, boolean addEdit, boolean addList){
         ArrayList<BaseComponent> arr = new ArrayList<>();
-        {
+        if (addEdit){
             final BaseComponent[] link = TextComponent.fromLegacyText(" §6§o[Edit]");
             final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict edit " + bannedItem.item + (bannedItem.data == null ? "" : " " + bannedItem.data));
             final HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to edit"));
             Arrays.stream(link).peek(l->l.setClickEvent(edit)).peek(l->l.setHoverEvent(hover)).forEach(arr::add);
         }
-        {
+        if (addList){
             final BaseComponent[] link = TextComponent.fromLegacyText(" §6§o[List]");
             final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banneditems");
             final HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to go back to ban list"));

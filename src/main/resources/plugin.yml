@@ -3,7 +3,7 @@ version: @version@
 main: net.dirtcraft.dirtrestrict.DirtRestrict
 prefix: @pluginName@
 depend: []
-authors: [ShinyAfro]
+authors: [ShinyAfro, brunyman]
 description: An item restrictin plugin created for the dirtcraft network
 website: Dirtcraft.net
 commands:

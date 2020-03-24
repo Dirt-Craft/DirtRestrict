@@ -45,7 +45,7 @@ public class RemoveRestriction implements SubCommand {
 
         if (success) sender.sendMessage(response);
         else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
-        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
+        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem, false, true));
 
         return success;
     }
