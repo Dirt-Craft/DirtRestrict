@@ -4,10 +4,8 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
-import net.minecraft.item.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -19,7 +17,7 @@ public class BlockBreakHandler extends RestrictionHandler {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     private void onBlockBreak(BlockBreakEvent event) {
-        Iterator<ItemStack> itemIterator = event.getBlock().getDrops().iterator();
+        final Iterator<ItemStack> itemIterator = event.getBlock().getDrops().iterator();
         boolean compareDrops = false;
         MaterialData itemToDrop = null;
         if (itemIterator.hasNext()) {

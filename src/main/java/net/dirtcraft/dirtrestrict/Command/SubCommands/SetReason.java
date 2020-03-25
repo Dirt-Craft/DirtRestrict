@@ -13,7 +13,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
+import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
+import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
 public class SetReason implements SubCommand {
 

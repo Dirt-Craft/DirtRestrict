@@ -5,14 +5,10 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
-import net.dirtcraft.dirtrestrict.Handlers.Restrictions.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")

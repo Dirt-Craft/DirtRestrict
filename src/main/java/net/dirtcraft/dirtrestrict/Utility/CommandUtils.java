@@ -2,6 +2,7 @@ package net.dirtcraft.dirtrestrict.Utility;
 
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import org.bukkit.Material;
+
 import java.util.Optional;
 
 public class CommandUtils {

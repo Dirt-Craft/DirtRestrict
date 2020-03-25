@@ -11,9 +11,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
-
 import java.util.Optional;
+
+import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
+import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
 public class EditRestriction implements SubCommand {
 
