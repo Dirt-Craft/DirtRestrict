@@ -3,7 +3,7 @@ package net.dirtcraft.dirtrestrict.Handlers.Restrictions;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
-import net.dirtcraft.dirtrestrict.Handlers.BaseHandler;
+import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,7 +12,7 @@ import org.bukkit.material.MaterialData;
 
 import java.util.Optional;
 
-public class BlockBreakHandler extends BaseHandler implements Listener {
+public class BlockBreakHandler extends RestrictionHandler {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     private void onBlockBreak(BlockBreakEvent event) {

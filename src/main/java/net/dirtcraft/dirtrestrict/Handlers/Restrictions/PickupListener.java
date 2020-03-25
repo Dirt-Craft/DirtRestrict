@@ -1,33 +1,49 @@
 package net.dirtcraft.dirtrestrict.Handlers.Restrictions;
 
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
-import net.dirtcraft.dirtrestrict.Handlers.BaseHandler;
+import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-public class PickupListener extends BaseHandler implements Listener {
+public class PickupListener extends RestrictionHandler {
+    private Random random = new Random();
+
     @EventHandler(priority = EventPriority.LOWEST)
-    private void onBlockBreak(BlockBreakEvent event){
-        final Iterator<ItemStack> dropsIterator = event.getBlock().getDrops().iterator();
-        final Map<MaterialData, Boolean> checked = new HashMap<>();
-        while (dropsIterator.hasNext()){
-            final boolean allowed;
-            ItemStack is = dropsIterator.next();
-            if (checked.containsKey(is.getData())) {
-                allowed = checked.get(is.getData());
-            } else {
-                allowed = restricts.isRestricted(event.getPlayer(), is.getData(), RestrictionTypes.BREAK);
-                checked.put(is.getData(), allowed);
-            }
-            if (!allowed) dropsIterator.remove();
+    private void onItemPickup(PlayerPickupItemEvent event) {
+        Player p = event.getPlayer();
+        ItemStack item = event.getItem().getItemStack();
+
+        ItemKey itemKey = new ItemKey(item.getData());
+        RestrictionTypes type = RestrictionTypes.OWN;
+        Optional<Restriction> bannedInfo = isRestricted(itemKey, type);
+
+        if (bannedInfo.isPresent()) return;
+
+        type = RestrictionTypes.PICKUP;
+        bannedInfo = isRestricted(itemKey, type);
+
+        if (bannedInfo.isPresent()) {
+            event.setCancelled(true);
+
+            Location loc = event.getItem().getLocation();
+            event.getItem().teleport(new Location(loc.getWorld(), loc.getX() + getRandomInt(), loc.getY() + getRandomInt(), loc.getZ() + getRandomInt()));
+
+            soundHandler.sendPlingSound(p);
+            printMessage(p, type, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
         }
+
+    }
+
+    private int getRandomInt() {
+        return random.nextInt(5);
     }
 }

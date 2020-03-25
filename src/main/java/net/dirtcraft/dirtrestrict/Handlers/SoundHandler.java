@@ -3,7 +3,7 @@ package net.dirtcraft.dirtrestrict.Handlers;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-public class SoundHandler extends BaseHandler {
+public class SoundHandler extends RestrictionHandler {
     private final boolean sounds = true;
     public void sendAnvilLandSound(Player p) {
         if (sounds) p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 1);

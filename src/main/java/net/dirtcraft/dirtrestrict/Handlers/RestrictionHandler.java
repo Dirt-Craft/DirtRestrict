@@ -5,15 +5,18 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.dirtcraft.dirtrestrict.Handlers.Restrictions.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
-public abstract class BaseHandler {
+public abstract class RestrictionHandler implements Listener {
     protected final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
     protected final RestrictionList restricts = dirtRestrict.getRestrictions();
     protected final SoundHandler soundHandler = dirtRestrict.getSoundHandler();
@@ -28,18 +31,6 @@ public abstract class BaseHandler {
     protected void printMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason) {
         p.sendMessage(reason);
     }
-
-    /*
-    protected boolean hasPermission(Player player, Block block, RestrictionTypes type){
-        ItemKey itemKey = new ItemKey(block);
-        return checkPerms(player, itemKey.getUniqueIdentifier(), String.valueOf(itemKey.data), type.toString().toLowerCase());
-    }
-
-    protected boolean hasPermission(Player player, MaterialData data, RestrictionTypes type){
-        ItemKey itemKey = new ItemKey(data);
-        return checkPerms(player, itemKey.getUniqueIdentifier(), String.valueOf(itemKey.data), type.toString().toLowerCase());
-    }
-     */
 
     protected boolean hasPermission(Player player, ItemKey itemKey, RestrictionTypes type){
         return checkPerms(player, itemKey.getUniqueIdentifier(), String.valueOf(itemKey.data), type.toString().toLowerCase());

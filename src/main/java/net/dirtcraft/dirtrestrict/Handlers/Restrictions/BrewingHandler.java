@@ -3,7 +3,7 @@ package net.dirtcraft.dirtrestrict.Handlers.Restrictions;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
-import net.dirtcraft.dirtrestrict.Handlers.BaseHandler;
+import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BrewingHandler extends BaseHandler implements Listener {
+public class BrewingHandler extends RestrictionHandler {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBrewingPotions(BrewEvent event) {
         //Get potions before brewing
