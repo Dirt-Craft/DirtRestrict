@@ -16,9 +16,11 @@ import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
 import java.util.Optional;
 
 public class EditRestriction implements SubCommand {
+
+    public static final String ALIAS = "Edit";
     @Override
     public String getName() {
-        return "edit";
+        return ALIAS;
     }
 
     @Override
@@ -27,28 +29,28 @@ public class EditRestriction implements SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (strings.length < 2 || !(commandSender instanceof Player)) return false;
-        final Player player = (Player) commandSender;
-        final Optional<Material> optItem = parseMaterial(strings[0]);
-        final Optional<Byte> optByte = parseByte(strings[1]);
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if (args.length < 1 || !(sender instanceof Player)) return false;
+        final Player player = (Player) sender;
+        final Optional<Material> optItem = parseMaterial(args[0]);
+        final Optional<Byte> optByte = args.length > 1? parseByte(args[1]) : Optional.empty();
         if (!optItem.isPresent()) return false;
 
         final ItemKey itemKey = new ItemKey(optItem.get(), optByte.orElse(null));
         final Optional<Restriction> restriction = DirtRestrict.getInstance().getRestrictions().getRestriction(itemKey);
 
         if (!restriction.isPresent()) {
-            commandSender.sendMessage("§4Error: §cThis item is not restricted!");
+            sender.sendMessage("§4Error: §cThis item is not restricted!");
             return false;
         }
 
-        commandSender.sendMessage("§4§m=============[§4§l EDITOR §4§m]=============");
-        player.spigot().sendMessage(TextUtils.getRemoveLink(itemKey));
-        commandSender.sendMessage("§6Name: §7" + itemKey.getName() + " §r[§b" + itemKey.item + (itemKey.data == null? "§r]" : "§r:§3" + itemKey.data + "§r]"));
-        commandSender.sendMessage("§6ID: §7" + itemKey.getUniqueIdentifier());
+        sender.sendMessage("§4§m=============[§4§l EDITOR §4§m]=============");
+        player.spigot().sendMessage(TextUtils.getRemoveLinks(itemKey));
+        sender.sendMessage("§6Name: §7" + itemKey.getName() + " §r[§b" + itemKey.item + (itemKey.data == null? "§r]" : "§r:§3" + itemKey.data + "§r]"));
+        sender.sendMessage("§6ID: §7" + itemKey.getUniqueIdentifier());
         player.spigot().sendMessage(TextUtils.getReason(itemKey, restriction.get()));
         TextUtils.getToggleLinks(itemKey, restriction.get()).forEach(player.spigot()::sendMessage);
-        commandSender.sendMessage("§4§m==================================");
+        sender.sendMessage("§4§m==================================");
         return false;
     }
 }

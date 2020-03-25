@@ -16,9 +16,11 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
 
 public class SetReason implements SubCommand {
+
+    public static final String ALIAS = "Reason";
     @Override
     public String getName() {
-        return "reason";
+        return ALIAS;
     }
 
     @Override

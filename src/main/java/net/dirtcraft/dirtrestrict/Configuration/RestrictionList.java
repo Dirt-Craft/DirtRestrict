@@ -100,6 +100,14 @@ public class RestrictionList {
         return true;
     }
 
+    public boolean removeMeta(ItemKey key){
+        if (!restrictions.containsKey(key)) return false;
+        Restriction restriction = restrictions.get(key);
+        restrictions.remove(key);
+        restrictions.put(key.getAll(), restriction);
+        return true;
+    }
+
     public Optional<Restriction> getRestriction(ItemKey item){
         return Optional.ofNullable(restrictions.getOrDefault(item, null));
     }

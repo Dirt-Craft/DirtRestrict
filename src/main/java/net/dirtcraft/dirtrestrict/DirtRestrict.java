@@ -15,18 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class DirtRestrict extends JavaPlugin {
-    private List<RestrictionHandler> handlers = Arrays.asList(
-            new BlockBreakHandler(),
-            new BlockPlaceHandler(),
-            new BrewingHandler(),
-            new CraftingHandler(),
-            new CreativeHandler(),
-            new DropListener(),
-            new OwnershipHandler(),
-            new PickupListener(),
-            new SmeltingHandler(),
-            new UsageHandler()
-    );
+    private List<RestrictionHandler> handlers;
     private PluginManager manager;
     private static DirtRestrict INSTANCE;
     private RestrictionList restrictions;
@@ -38,6 +27,18 @@ public final class DirtRestrict extends JavaPlugin {
         restrictions = new RestrictionList(this);
         soundHandler = new SoundHandler();
         manager = Bukkit.getPluginManager();
+        handlers = Arrays.asList(
+                new BlockBreakHandler(),
+                new BlockPlaceHandler(),
+                new BrewingHandler(),
+                new CraftingHandler(),
+                new CreativeHandler(),
+                new DropListener(),
+                new OwnershipHandler(),
+                new PickupListener(),
+                new SmeltingHandler(),
+                new UsageHandler()
+        );
         handlers.forEach(h->manager.registerEvents(h, this));
         this.getCommand("bannedItems").setExecutor(new BannedItemCommand());
         this.getCommand("dirtrestrict").setExecutor(new DirtRestrictCommand());

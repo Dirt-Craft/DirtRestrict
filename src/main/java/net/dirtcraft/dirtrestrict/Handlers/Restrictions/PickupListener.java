@@ -31,16 +31,14 @@ public class PickupListener extends RestrictionHandler {
         type = RestrictionTypes.PICKUP;
         bannedInfo = isRestricted(itemKey, type);
 
-        if (bannedInfo.isPresent()) {
-            event.setCancelled(true);
+        if (!bannedInfo.isPresent()) return;
+        event.setCancelled(true);
 
-            Location loc = event.getItem().getLocation();
-            event.getItem().teleport(new Location(loc.getWorld(), loc.getX() + getRandomInt(), loc.getY() + getRandomInt(), loc.getZ() + getRandomInt()));
+        Location loc = event.getItem().getLocation();
+        event.getItem().teleport(new Location(loc.getWorld(), loc.getX() + getRandomInt(), loc.getY() + getRandomInt(), loc.getZ() + getRandomInt()));
 
-            soundHandler.sendPlingSound(p);
-            printMessage(p, type, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
-        }
-
+        soundHandler.sendPlingSound(p);
+        printMessage(p, type, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
     }
 
     private int getRandomInt() {

@@ -6,10 +6,6 @@ import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.TextUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,10 +17,9 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
-public class AddRestriction implements SubCommand {
+public class SetUniversal implements SubCommand {
 
-    public static final String ALIAS = "Add";
-
+    public static final String ALIAS = "SetUniversal";
     @Override
     public String getName() {
         return ALIAS;
@@ -32,11 +27,11 @@ public class AddRestriction implements SubCommand {
 
     @Override
     public String getPermission() {
-        return Permission.COMMAND_MODIFY_ADD;
+        return Permission.COMMAND_MODIFY_META;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         RestrictionList restrictions = DirtRestrict.getInstance().getRestrictions();
         final Optional<Material> material;
         final Optional<Byte> b;
@@ -44,10 +39,6 @@ public class AddRestriction implements SubCommand {
             final ItemStack hand = (((Player) sender).getItemInHand());
             material = Optional.of(hand.getType());
             b = Optional.of(hand.getData().getData());
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("-u")){
-            final ItemStack hand = (((Player) sender).getItemInHand());
-            material = Optional.of(hand.getType());
-            b = Optional.empty();
         } else if(args.length == 1) {
             material = parseMaterial(args[0]);
             b = Optional.empty();
@@ -58,11 +49,11 @@ public class AddRestriction implements SubCommand {
 
         if ( !material.isPresent() ) return false;
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
-        final boolean success = restrictions.addBan(bannedItem);
-        final String response = "§aAdded §r\"§5" + bannedItem.getName() +"§r\" §ato the ban list.";
+        final boolean success = restrictions.removeMeta(bannedItem);
+        final String response = "§aChanged §r\"§5" + bannedItem.getName() +"§r\" §ato ignore meta.";
 
         if (success) sender.sendMessage(response);
-        else sender.sendMessage("§cThis item is already banned!");
+        else sender.sendMessage("§cThis item does not exist!");
         if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
 
         return success;

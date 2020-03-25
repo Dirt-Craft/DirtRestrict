@@ -1,5 +1,6 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
+import net.dirtcraft.dirtrestrict.Command.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
@@ -8,7 +9,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import java.awt.event.TextEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ public class TextUtils {
     public static TextComponent getRestrictionText(ItemKey item, Restriction entry, char main, char trim, char reason, boolean hasPerms){
         TextComponent textComponent = new TextComponent(getBaseText(item, entry, main, trim, reason));
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getHover(item, entry, hasPerms)));
-        if (hasPerms) textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(item)));
+        if (hasPerms) textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(EditRestriction.ALIAS, item)));
         return textComponent;
     }
 
@@ -28,23 +28,33 @@ public class TextUtils {
                 .forEach(t->{
                     TextComponent text = new TextComponent("§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Banned" : "§2Allowed"));
                     text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to toggle.")));
-                    text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict toggle " + key.item + (key.data != null ? " " + key.data + " " : " ") + t));
+                    text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleRestriction.ALIAS, key, t.toString())));
                     arr.add(text);
                 });
         return arr;
     }
 
-    public static BaseComponent getRemoveLink(ItemKey key){
-        TextComponent text = new TextComponent("§3[§6Remove Ban§3]");
-        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick remove this entry.")));
-        text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict remove " + key.item + (key.data != null ? " " + key.data + " " : " ")));
-        return text;
+    public static BaseComponent[] getRemoveLinks(ItemKey key){
+        BaseComponent[] arr = new BaseComponent[key.data == null ? 1 : 2];
+        {
+            TextComponent text = new TextComponent("§3[§6Remove Ban§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick remove this entry.")));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(RemoveRestriction.ALIAS, key)));
+            arr[0] = text;
+        }
+        if (key.data != null){
+            TextComponent text = new TextComponent(" §3[§6Set Universal§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick make this entry ignore meta.")));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SetUniversal.ALIAS, key)));
+            arr[1] = text;
+        }
+        return arr;
     }
 
     public static BaseComponent getReason(ItemKey key, Restriction restriction){
         TextComponent text = new TextComponent("§6Ban Reason: §7" + restriction.getReason());
         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to edit.")));
-        text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/dirtrestrict reason " + key.item + (key.data != null ? " " + key.data + " " : " ")));
+        text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, getCommand(SetReason.ALIAS, key)));
         return text;
     }
 
@@ -62,7 +72,7 @@ public class TextUtils {
         ArrayList<BaseComponent> arr = new ArrayList<>();
         if (addEdit){
             final BaseComponent[] link = TextComponent.fromLegacyText(" §6§o[Edit]");
-            final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/dirtrestrict edit " + bannedItem.item + (bannedItem.data == null ? "" : " " + bannedItem.data));
+            final ClickEvent edit = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(EditRestriction.ALIAS, bannedItem));
             final HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to edit"));
             Arrays.stream(link).peek(l->l.setClickEvent(edit)).peek(l->l.setHoverEvent(hover)).forEach(arr::add);
         }
@@ -97,8 +107,13 @@ public class TextUtils {
         if (reason != null && !reason.equals("") && !reason.matches("\\s")) sb.append("§").append(trim).append(" - §").append(color).append(reason);
     }
 
-    private static String getCommand(ItemKey itemKey){
-        return "/dirtrestrict edit " + itemKey.item + " " + itemKey.data;
+    private static String getCommand(String sub, ItemKey itemKey){
+        final String item = itemKey.data == null? String.valueOf(itemKey.item) : itemKey.item + " " + itemKey.data;
+        return "/dirtrestrict " + sub + " " + item;
+    }
+
+    private static String getCommand(String sub, ItemKey itemKey, String args){
+        return getCommand(sub, itemKey) + " " + args;
     }
 
     private static BaseComponent[] getHover(ItemKey itemKey, Restriction restriction, boolean hasPerms){

@@ -17,9 +17,11 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
 
 public class ToggleRestriction implements SubCommand {
+
+    public static final String ALIAS = "Toggle";
     @Override
     public String getName() {
-        return "toggle";
+        return ALIAS;
     }
 
     @Override

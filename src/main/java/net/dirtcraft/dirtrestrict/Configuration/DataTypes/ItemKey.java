@@ -49,6 +49,7 @@ public class ItemKey {
     }
 
     public String getName(){
+        final byte data = this.data == null? 0 : this.data;
         return new net.minecraft.item.ItemStack(Item.getItemById(item), 0, data).getDisplayName();
     }
 

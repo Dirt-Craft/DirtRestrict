@@ -16,9 +16,11 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
 
 public class RemoveRestriction implements SubCommand {
+
+    public static final String ALIAS = "Remove";
     @Override
     public String getName() {
-        return "remove";
+        return ALIAS;
     }
 
     @Override

@@ -18,17 +18,18 @@ public class DirtRestrictCommand implements CommandExecutor {
         addCommand(new SetReason());
         addCommand(new AddRestriction());
         addCommand(new EditRestriction());
+        addCommand(new SetUniversal());
     }
 
     private void addCommand(SubCommand command){
-        subCommandMap.put(command.getName(), command);
+        subCommandMap.put(command.getName().toLowerCase(), command);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(Permission.COMMAND_MODIFY_BASE) || args.length == 0) return false;
 
-        final String sub = args[0];
+        final String sub = args[0].toLowerCase();
         SubCommand subCommand = subCommandMap.get(sub);
         if (subCommand == null) return false;
 
