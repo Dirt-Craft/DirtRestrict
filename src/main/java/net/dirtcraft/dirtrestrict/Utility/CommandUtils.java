@@ -35,8 +35,12 @@ public class CommandUtils {
     }
 
     public static Optional<RestrictionTypes> parseType(String s){
+        return parseEnum(RestrictionTypes.class, s);
+    }
+
+    public static <T extends Enum<T>> Optional<T> parseEnum(Class<T> clazz, String s){
         try {
-            return Optional.of(RestrictionTypes.valueOf(s));
+            return Optional.of(T.valueOf(clazz, s));
         } catch (Exception ignored){
             return Optional.empty();
         }

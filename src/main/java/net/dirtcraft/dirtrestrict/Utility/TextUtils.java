@@ -26,7 +26,7 @@ public class TextUtils {
         ArrayList<BaseComponent> arr = new ArrayList<>();
         Arrays.stream(RestrictionTypes.values())
                 .forEach(t->{
-                    TextComponent text = new TextComponent("§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Banned" : "§2Allowed"));
+                    TextComponent text = new TextComponent("§6" + t.getName() + ": " + (restriction.isRestricted(t, null) ? "§4Banned" : "§2Allowed"));
                     text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to toggle.")));
                     text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleRestriction.ALIAS, key, t.toString())));
                     arr.add(text);
@@ -121,7 +121,7 @@ public class TextUtils {
         hover.add(new TextComponent("§cBanned Methods:"));
         AtomicInteger i = new AtomicInteger();
         Arrays.stream(RestrictionTypes.values())
-                .forEach(t->hover.add(new TextComponent((i.getAndIncrement() % 4 == 0? "\n" : "§r, ") + "§6" + t.getName() + ": " + (restriction.isRestricted(t) ? "§4Banned" : "§2Allowed"))));
+                .forEach(t->hover.add(new TextComponent((i.getAndIncrement() % 4 == 0? "\n" : "§r, ") + "§6" + t.getName() + ": " + (restriction.isRestricted(t, null) ? "§4Banned" : "§2Allowed"))));
         hover.add(new TextComponent("\n§7id: " + itemKey.getUniqueIdentifier()));
         if (hasPerms) hover.add(new TextComponent("\n§3§nClick to edit this entry."));
         return hover.toArray(new BaseComponent[0]);

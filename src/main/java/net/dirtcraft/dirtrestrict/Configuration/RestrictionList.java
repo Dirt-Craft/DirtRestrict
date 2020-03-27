@@ -1,21 +1,24 @@
 package net.dirtcraft.dirtrestrict.Configuration;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.reflect.TypeToken;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
+import net.dirtcraft.dirtrestrict.Configuration.Serializers.EnumSetSerializer;
+import net.dirtcraft.dirtrestrict.Configuration.Serializers.HashSetSerializer;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.ItemKeySerializer;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -33,7 +36,10 @@ public class RestrictionList {
         this.plugin = plugin;
         final File loc = new File(plugin.getDataFolder(), "Restrictions.hocon");
         plugin.getDataFolder().mkdirs();
-        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemKey.class), new ItemKeySerializer());
+        final TypeSerializerCollection serializers = TypeSerializers.getDefaultSerializers();
+        serializers.registerType(TypeToken.of(ItemKey.class), new ItemKeySerializer());
+        serializers.registerType(new TypeToken<EnumSet<RestrictionTypes>>(){}, new EnumSetSerializer<>());
+        serializers.registerType(new TypeToken<HashSet<?>>(){}, new HashSetSerializer());
         loader = HoconConfigurationLoader.builder()
                 .setFile(loc)
                 .build();

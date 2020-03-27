@@ -11,13 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 public class ItemKey {
     private static final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
-    private static final RestrictionList restrictions = dirtRestrict.getRestrictions();
     public final int item;
     public final Byte data;
 
@@ -97,15 +98,15 @@ public class ItemKey {
         return new ItemKey(item, null);
     }
 
-    public Optional<Restriction> hasPermission(Player player, RestrictionTypes type, Location location){
+    public Optional<Restriction> hasPermission(@Nullable Player player, @Nonnull RestrictionTypes type, @Nullable Location location){
         return isRestricted(type, location);
         //return checkPerms(player, getUniqueIdentifier(), String.valueOf(data), type.toString().toLowerCase());
     }
 
     private Optional<Restriction> isRestricted(RestrictionTypes type, Location location){
-        Optional<Restriction> optRestriction = restrictions.getRestriction(this);
-        if (!optRestriction.isPresent()) optRestriction = restrictions.getRestriction(getAll());
-        if (optRestriction.isPresent() && optRestriction.get().isRestricted(type)) return optRestriction;
+        Optional<Restriction> optRestriction = dirtRestrict.getRestrictions().getRestriction(this);
+        if (!optRestriction.isPresent()) optRestriction = dirtRestrict.getRestrictions().getRestriction(getAll());
+        if (optRestriction.isPresent() && optRestriction.get().isRestricted(type, null)) return optRestriction;
         else return Optional.empty();
     }
 
