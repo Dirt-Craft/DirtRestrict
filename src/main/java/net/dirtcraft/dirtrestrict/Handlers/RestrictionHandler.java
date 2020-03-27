@@ -8,40 +8,30 @@ import net.dirtcraft.dirtrestrict.DirtRestrict;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-@SuppressWarnings("deprecation")
 public abstract class RestrictionHandler implements Listener {
     protected final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
     protected final RestrictionList restricts = dirtRestrict.getRestrictions();
     protected final SoundHandler soundHandler = dirtRestrict.getSoundHandler();
 
-    protected Optional<Restriction> isRestricted(ItemKey key, RestrictionTypes type){
-        Optional<Restriction> optRestriction = restricts.getRestriction(key);
-        if (!optRestriction.isPresent()) optRestriction = restricts.getRestriction(key.getAll());
-        if (optRestriction.isPresent() && optRestriction.get().isRestricted(type)) return optRestriction;
-        else return Optional.empty();
-    }
-
     protected void printMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason) {
-        p.sendMessage(reason);
+        System.out.println(getMessage(p, type, itemKey, reason));
     }
 
-    protected boolean hasPermission(Player player, ItemKey itemKey, RestrictionTypes type){
-        return checkPerms(player, itemKey.getUniqueIdentifier(), String.valueOf(itemKey.data), type.toString().toLowerCase());
-    }
-
-    private boolean checkPerms(Player player, String itemId, String meta, String type){
-        if (checkPerm(player, "*", meta, type)) return true;
-        if (checkPerm(player, itemId, "*", type)) return true;
-        if (checkPerm(player, itemId, meta, type)) return true;
-        return false;
-    }
-
-    private boolean checkPerm(Player player, String... check){
-        StringBuilder sb = new StringBuilder("dirtrestrict.bypass.");
-        Arrays.stream(check).forEach(sb::append);
-        return player.hasPermission(sb.toString());
+    private String getMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason){
+        switch (type){
+            case OWN: return "You are not allowed to own this item!";
+            case USE: return "You are not allowed to use this item!";
+            case DROP: return "You are not allowed to drop this item!";
+            case BREAK: return "You are not allowed to break this item!";
+            case PLACE: return "You are not allowed to place this item!";
+            case PICKUP: return "You are not allowed to pick up this item!";
+            case BREWING: return "You are not allowed to brew this potion!";
+            case CRAFTING: return "You are not allowed to craft this item!";
+            case SMELTING: return  "You are not allowed to smelt this item!";
+            case CREATIVE: return "This item cannot be used in creative!";
+            default: return "This is not allowed.";
+        }
     }
 }

@@ -1,15 +1,23 @@
 package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
+import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.minecraft.item.Item;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ItemKey {
+    private static final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
+    private static final RestrictionList restrictions = dirtRestrict.getRestrictions();
     public final int item;
     public final Byte data;
 
@@ -87,5 +95,30 @@ public class ItemKey {
 
     public ItemKey getAll(){
         return new ItemKey(item, null);
+    }
+
+    public Optional<Restriction> hasPermission(Player player, RestrictionTypes type, Location location){
+        return isRestricted(type, location);
+        //return checkPerms(player, getUniqueIdentifier(), String.valueOf(data), type.toString().toLowerCase());
+    }
+
+    private Optional<Restriction> isRestricted(RestrictionTypes type, Location location){
+        Optional<Restriction> optRestriction = restrictions.getRestriction(this);
+        if (!optRestriction.isPresent()) optRestriction = restrictions.getRestriction(getAll());
+        if (optRestriction.isPresent() && optRestriction.get().isRestricted(type)) return optRestriction;
+        else return Optional.empty();
+    }
+
+    private boolean checkPerms(Player player, String itemId, String meta, String type){
+        if (checkPerm(player, "*", meta, type)) return true;
+        if (checkPerm(player, itemId, "*", type)) return true;
+        if (checkPerm(player, itemId, meta, type)) return true;
+        return false;
+    }
+
+    private boolean checkPerm(Player player, String... check){
+        StringBuilder sb = new StringBuilder("dirtrestrict.bypass.");
+        Arrays.stream(check).forEach(sb::append);
+        return player.hasPermission(sb.toString());
     }
 }

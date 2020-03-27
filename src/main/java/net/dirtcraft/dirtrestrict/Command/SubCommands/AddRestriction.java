@@ -54,6 +54,7 @@ public class AddRestriction implements SubCommand {
 
         if ( !material.isPresent() ) return false;
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
+        if (bannedItem.getItem() == null) return false;
         final boolean success = restrictions.addBan(bannedItem);
         final String response = "§aAdded §r\"§5" + bannedItem.getName() +"§r\" §ato the ban list.";
 

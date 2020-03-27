@@ -6,13 +6,14 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -20,15 +21,33 @@ import java.util.Optional;
 public class UsageHandler extends RestrictionHandler {
 
     @EventHandler(priority = EventPriority.LOWEST)
+    private void onAccessInventory(InventoryOpenEvent event){
+        if (!(event.getInventory().getHolder() instanceof BlockState) || !(event.getPlayer() instanceof Player)) return;
+        final Player p = (Player) event.getPlayer();
+        final BlockState src = (BlockState) event.getInventory().getHolder();
+        final Block block = src.getBlock();
+        if (block == null) return;
+        ItemKey itemKey = new ItemKey(block);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+        if (bannedInfo.isPresent()) {
+            event.setCancelled(true);
+            soundHandler.sendPlingSound(p);
+            printMessage(p, RestrictionTypes.USE, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onInteract(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
         ItemStack item = p.getItemInHand();
         Block interactingBlock = event.getClickedBlock();
+        ItemKey itemKey = null;
+        Optional<Restriction> bannedInfo = Optional.empty();
 
-        if (interactingBlock == null) return;
-
-        ItemKey itemKey = new ItemKey(interactingBlock);
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.USE);
+        if (interactingBlock != null) {
+            itemKey = new ItemKey(interactingBlock);
+            bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+        }
 
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
@@ -37,28 +56,20 @@ public class UsageHandler extends RestrictionHandler {
         } else {
             if (!event.isBlockInHand()) {
                 itemKey = new ItemKey(item.getData());
-                bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+                bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
+
                 if (bannedInfo.isPresent()) return;
+                bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
 
-                bannedInfo = isRestricted(itemKey, RestrictionTypes.USE);
                 if (!bannedInfo.isPresent()) return;
-
                 event.setCancelled(true);
-                Bukkit.getScheduler().runTask(dirtRestrict, () -> {
-                    ItemStack handItem = p.getItemInHand();
-                    p.getWorld().dropItem(p.getLocation(), handItem);
-                    p.setItemInHand(null);
-                    p.closeInventory();
-                    p.updateInventory();
-                });
-
                 soundHandler.sendPlingSound(p);
                 printMessage(p, RestrictionTypes.USE, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
             }
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /*
     @EventHandler(priority = EventPriority.LOWEST)
     private void onItemHeldSwitch(PlayerItemHeldEvent event) {
         int newSlot = event.getNewSlot();
@@ -82,6 +93,7 @@ public class UsageHandler extends RestrictionHandler {
             printMessage(p, type, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
         }
     }
+     */
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onEntityDamage(EntityDamageByEntityEvent event) {
@@ -90,7 +102,7 @@ public class UsageHandler extends RestrictionHandler {
             ItemStack item = p.getItemInHand();
 
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.USE);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
             }
@@ -100,7 +112,7 @@ public class UsageHandler extends RestrictionHandler {
             ItemStack item = p.getItemInHand();
 
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.USE);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
             }

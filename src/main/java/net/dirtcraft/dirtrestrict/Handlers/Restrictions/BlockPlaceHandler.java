@@ -15,11 +15,11 @@ public class BlockPlaceHandler extends RestrictionHandler {
     private void onPlace(BlockPlaceEvent event) {
         if (event.getItemInHand() == null) return;
         final ItemKey itemKey = new ItemKey(event.getItemInHand().getData());
-        final Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.PLACE);
+        final Optional<Restriction> bannedInfo = itemKey.hasPermission(event.getPlayer(), RestrictionTypes.PLACE, event.getBlock().getLocation());
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
             soundHandler.sendEndermanTeleportSound(event.getPlayer());
-            printMessage(event.getPlayer(), RestrictionTypes.BREAK, itemKey, restricts.getRestriction(itemKey).map(Restriction::getReason).orElse(null));
+            printMessage(event.getPlayer(), RestrictionTypes.PLACE, itemKey, restricts.getRestriction(itemKey).map(Restriction::getReason).orElse(null));
         }
     }
 }

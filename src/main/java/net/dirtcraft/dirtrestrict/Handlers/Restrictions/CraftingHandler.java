@@ -18,14 +18,14 @@ public class CraftingHandler extends RestrictionHandler {
         ItemKey itemKey = new ItemKey(event.getRecipe().getResult().getData());
         if (!event.getViewers().isEmpty()) {
             Player p = (Player) event.getViewers().get(0);
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.CRAFTING);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.CRAFTING, p.getLocation());
             if (bannedInfo.isPresent()) {
                 event.getInventory().setResult(null);
                 soundHandler.sendPlingSound(p);
                 printMessage(p, RestrictionTypes.CRAFTING, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
             }
         } else {
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.CRAFTING);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(null, RestrictionTypes.CRAFTING, null);
             if (bannedInfo.isPresent()) {
                 event.getInventory().setResult(null);
             }

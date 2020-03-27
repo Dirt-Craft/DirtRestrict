@@ -5,6 +5,8 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,6 +26,7 @@ public class BrewingHandler extends RestrictionHandler {
         final ItemStack Slot2;
         final ItemStack ing = event.getContents().getIngredient();
         final ItemStack ingredient = new ItemStack(ing.getType(), 1, ing.getDurability());
+        final Location location = event.getBlock().getLocation();
 
         if (event.getContents().getItem(0) != null) {
             Slot0 = new ItemStack(event.getContents().getItem(0).getType(), 1, (short) event.getContents().getItem(0).getDurability());
@@ -44,6 +47,7 @@ public class BrewingHandler extends RestrictionHandler {
 
         //Check the brewed potions for banned potions. Delayed task to check the potions after brewing.
         Bukkit.getScheduler().scheduleSyncDelayedTask(dirtRestrict, () -> {
+            Player masterPlayer = event.getContents().getViewers().isEmpty()? null :  (Player) event.getContents().getViewers().get(0);
             List<Player> players = event.getContents().getViewers().stream()
                     .filter(Player.class::isInstance)
                     .map(Player.class::cast)
@@ -58,7 +62,7 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 0 for banned items
             if (item0 != null) {
                 itemKey = new ItemKey(item0.getData());
-                bannedInfo = isRestricted(itemKey, RestrictionTypes.BREWING);
+                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(0, Slot0);
                 }
@@ -66,7 +70,7 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 1 for banned items
             if (item1 != null) {
                 itemKey = new ItemKey(item1.getData());
-                bannedInfo = isRestricted(itemKey, RestrictionTypes.BREWING);
+                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(1, Slot1);
                 }
@@ -74,14 +78,14 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 2 for banned items
             if (item2 != null) {
                 itemKey = new ItemKey(item2.getData());
-                bannedInfo = isRestricted(itemKey, RestrictionTypes.BREWING);
+                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(2, Slot2);
                 }
             }
             //If there is a viewer on the brewing stand send the restricted message
-            if (bannedInfo.isPresent() && !players.isEmpty()) {
-                players.get(0).getInventory().addItem(new ItemStack(ingredient.getType(), 1));
+            if (bannedInfo.isPresent() && masterPlayer != null) {
+                masterPlayer.getInventory().addItem(new ItemStack(ingredient.getType(), 1));
                 final ItemKey finalItemKey = itemKey;
                 final Optional<Restriction> finalBannedInfo = bannedInfo;
                 players.forEach(player->{

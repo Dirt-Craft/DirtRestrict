@@ -22,7 +22,7 @@ public class SmeltingHandler extends RestrictionHandler {
             Player p = (Player) f.getInventory().getViewers().get(0);
 
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.SMELTING);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.SMELTING, event.getBlock().getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
 
@@ -31,7 +31,7 @@ public class SmeltingHandler extends RestrictionHandler {
             }
         } else {
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.SMELTING);
+            Optional<Restriction> bannedInfo = itemKey.hasPermission(null, RestrictionTypes.SMELTING, event.getBlock().getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
             }

@@ -28,7 +28,7 @@ public class BlockBreakHandler extends RestrictionHandler {
             }
         }
         final ItemKey itemKey = compareDrops ? new ItemKey(itemToDrop) : new ItemKey(event.getBlock());
-        final Optional<Restriction> banned = isRestricted(itemKey, RestrictionTypes.BREAK);
+        final Optional<Restriction> banned = itemKey.hasPermission(event.getPlayer(), RestrictionTypes.BREAK, event.getBlock().getLocation());
         if (banned.isPresent()) {
             event.setCancelled(true);
             dirtRestrict.getSoundHandler().sendPlingSound(event.getPlayer());

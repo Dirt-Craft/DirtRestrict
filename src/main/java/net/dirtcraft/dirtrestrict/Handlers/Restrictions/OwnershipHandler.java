@@ -45,7 +45,7 @@ public class OwnershipHandler extends RestrictionHandler {
 
         if (cursorItem == null) return;
         ItemKey itemKey = new ItemKey(cursorItem.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
@@ -63,7 +63,7 @@ public class OwnershipHandler extends RestrictionHandler {
         ItemStack item = event.getItem().getItemStack();
 
         ItemKey itemKey = new ItemKey(item.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
@@ -85,7 +85,7 @@ public class OwnershipHandler extends RestrictionHandler {
         if (item == null) return;
 
         ItemKey itemKey = new ItemKey(item.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             p.getInventory().setItem(newSlot, null);
@@ -103,7 +103,7 @@ public class OwnershipHandler extends RestrictionHandler {
         Player p = (Player) event.getWhoClicked();
 
         ItemKey itemKey = new ItemKey(cursorItem.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
@@ -123,7 +123,7 @@ public class OwnershipHandler extends RestrictionHandler {
         if (item == null) return;
 
         ItemKey itemKey = new ItemKey(item.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
@@ -142,7 +142,7 @@ public class OwnershipHandler extends RestrictionHandler {
         ItemStack item = event.getItemDrop().getItemStack();
 
         ItemKey itemKey = new ItemKey(item.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             event.getItemDrop().remove();
@@ -155,7 +155,7 @@ public class OwnershipHandler extends RestrictionHandler {
 
     private void inventoryClickRestriction(@Nonnull InventoryClickEvent event, @Nonnull ItemStack currentItem, @Nonnull Player p, boolean removeCursorItem) {
         ItemKey itemKey = new ItemKey(currentItem.getData());
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, RestrictionTypes.OWN);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
 
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);

@@ -20,16 +20,17 @@ public class PickupListener extends RestrictionHandler {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onItemPickup(PlayerPickupItemEvent event) {
         Player p = event.getPlayer();
+        Location location = event.getItem().getLocation();
         ItemStack item = event.getItem().getItemStack();
 
         ItemKey itemKey = new ItemKey(item.getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = isRestricted(itemKey, type);
+        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, location);
 
         if (bannedInfo.isPresent()) return;
 
         type = RestrictionTypes.PICKUP;
-        bannedInfo = isRestricted(itemKey, type);
+        bannedInfo = itemKey.hasPermission(p, type, location);
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);
