@@ -2,8 +2,6 @@ package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.World;
 
 import javax.annotation.Nullable;
@@ -12,7 +10,7 @@ import java.util.*;
 @ConfigSerializable
 public class Restriction {
     @Setting private boolean hidden;
-    @Setting private boolean dimWhitelistMode;
+    @Setting private boolean dimBlacklist;
     @Setting private String reason;
     @Setting private EnumSet<RestrictionTypes> restrictions;
     @Setting private HashSet<UUID> dims;
@@ -37,8 +35,9 @@ public class Restriction {
 
     public boolean isRestricted(RestrictionTypes type, @Nullable World world) {
         if (!restrictions.contains(type)) return false;
-        if (world == null || dims.contains(world.getUID())) return !dimWhitelistMode;
-        return false;
+        if (world == null ) return true;
+        if (dimBlacklist) return dims.contains(world.getUID());
+        else return !dims.contains(world.getUID());
     }
 
     public boolean toggleRestrictions(RestrictionTypes type){
@@ -53,12 +52,12 @@ public class Restriction {
     }
 
     public boolean isDimsBlacklist(){
-        return !dimWhitelistMode;
+        return dimBlacklist;
     }
 
     public boolean toggleBlacklist(){
-        dimWhitelistMode = !dimWhitelistMode;
-        return !dimWhitelistMode;
+        dimBlacklist = !dimBlacklist;
+        return dimBlacklist;
     }
 
     public boolean addDim(World world){
@@ -75,5 +74,9 @@ public class Restriction {
 
     public Collection<UUID> getDims(){
         return dims;
+    }
+
+    public boolean hasDim(UUID uuid){
+        return dims.contains(uuid);
     }
 }

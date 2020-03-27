@@ -36,7 +36,7 @@ public class TextUtils {
         return arr;
     }
 
-    public static BaseComponent[] getRemoveLinks(ItemKey key, Restriction restriction){
+    public static BaseComponent[] getRemoveLinks(ItemKey key, Restriction restriction, World world){
         BaseComponent[] arr = new BaseComponent[key.data == null ? 3 : 4];
         {
             TextComponent text = new TextComponent("§3[§6Remove Ban§3]");
@@ -45,15 +45,20 @@ public class TextUtils {
             arr[0] = text;
         }
         {
-            TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Whitelist Dims§3]" : " §3[§6Blacklist Dims§3]");
-            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nToggle the dims list to whitelist / blacklist.")));
+            TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Whitelist§3]" : " §3[§6Blacklist§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nSet the dim list to a " + (restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleDimBlacklist.ALIAS, key)));
             arr[1] = text;
         }
-        {
+        if (!restriction.hasDim(world.getUID())){
             TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Blacklist World§3]" : " §3[§6Whitelist World§3]");
-            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nAdds the current world to the whitelist / blacklist.")));
-            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleDimBlacklist.ALIAS, key)));
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nAdds the current world to the " + (restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(AddDim.ALIAS, key, world.getName())));
+            arr[2] = text;
+        } else {
+            TextComponent text = new TextComponent(" §3[§6Remove World§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nRemoves the current world from the " + (restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(RemoveDim.ALIAS, key, world.getName())));
             arr[2] = text;
         }
         if (key.data != null){
@@ -132,8 +137,10 @@ public class TextUtils {
 
     public static BaseComponent getWorlds(Collection<UUID> set, ItemKey itemKey, boolean blackList){
         Server server = Bukkit.getServer();
-        TextComponent x = new TextComponent(blackList? "§6Banned Worlds: [" : "Permitted Worlds: [");
+        TextComponent x = new TextComponent(blackList? "§6Banned Worlds: §c" : "§6Permitted Worlds: §a");
         Iterator<UUID> uuidIterator = set.iterator();
+        if (uuidIterator.hasNext()) x.addExtra("[");
+        else x.addExtra("N/A");
         while (uuidIterator.hasNext()){
             x.addExtra(formatWorld(server.getWorld(uuidIterator.next()), itemKey, blackList ? 'c' : 'a'));
             if (uuidIterator.hasNext()) x.addExtra(", ");

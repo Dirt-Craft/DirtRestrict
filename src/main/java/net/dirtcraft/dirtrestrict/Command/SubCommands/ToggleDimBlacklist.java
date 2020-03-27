@@ -44,15 +44,13 @@ public class ToggleDimBlacklist implements SubCommand {
             b = Optional.empty();
         }
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
-        final Optional<Restriction> restriction = restrictions.getRestriction(bannedItem);
-        AtomicBoolean x = new AtomicBoolean(false);
-        restriction.ifPresent(res-> x.set(res.toggleBlacklist()));
-        final String response = "§aBlacklist set to " + x.get() + " for §r\"§5" + bannedItem.getName() + "§r\"";
+        Optional<Boolean> blacklist = restrictions.toggleBlacklist(bannedItem);
+        if (!blacklist.isPresent()) return false;
+        final String response = "§aDims set to " + (blacklist.get()? "blacklist" : "whitelist") + " for §r\"§5" + bannedItem.getName() + "§r\"";
 
-        if (restriction.isPresent()) sender.sendMessage(response);
-        else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
-        if (sender instanceof Player && restriction.isPresent()) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem, false, true));
+        sender.sendMessage(response);
+        if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
 
-        return restriction.isPresent();
+        return true;
     }
 }

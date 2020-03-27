@@ -39,9 +39,9 @@ public class RestrictionList {
         final File loc = new File(plugin.getDataFolder(), "Restrictions.hocon");
         plugin.getDataFolder().mkdirs();
         final TypeSerializerCollection serializers = TypeSerializers.getDefaultSerializers();
-        serializers.registerType(TypeToken.of(ItemKey.class), new ItemKeySerializer());
         serializers.registerType(new TypeToken<EnumSet<RestrictionTypes>>(){}, new EnumSetSerializer<>());
         serializers.registerType(new TypeToken<HashSet<?>>(){}, new HashSetSerializer());
+        serializers.registerType(new TypeToken<ItemKey>(){}, new ItemKeySerializer());
         serializers.registerType(new TypeToken<UUID>(){}, new UUIDSerializer());
         loader = HoconConfigurationLoader.builder()
                 .setFile(loc)
@@ -70,7 +70,7 @@ public class RestrictionList {
                         saving.set(false);
                         return true;
                     }
-                } catch (IOException | ObjectMappingException | InterruptedException e) {
+                } catch (Exception e) {
                     plugin.getLogger().log(Level.SEVERE, e.getMessage());
                     e.printStackTrace();
                     saving.set(false);
@@ -125,17 +125,23 @@ public class RestrictionList {
 
     public Optional<Boolean> toggleBlacklist(ItemKey key){
         if (!restrictions.containsKey(key)) return Optional.empty();
-        else return Optional.of(restrictions.get(key).toggleBlacklist());
+        Optional<Boolean> res = Optional.of(restrictions.get(key).toggleBlacklist());
+        save();
+        return res;
     }
 
     public Optional<Boolean> addDim(ItemKey key, World world){
         if (!restrictions.containsKey(key)) return Optional.empty();
-        else return Optional.of(restrictions.get(key).addDim(world));
+        Optional<Boolean> res = Optional.of(restrictions.get(key).addDim(world));
+        save();
+        return res;
     }
 
     public Optional<Boolean> removeDim(ItemKey key, World world){
         if (!restrictions.containsKey(key)) return Optional.empty();
-        else return Optional.of(restrictions.get(key).removeDim(world));
+        Optional<Boolean> res = Optional.of(restrictions.get(key).removeDim(world));
+        save();
+        return res;
     }
 
     public Optional<Restriction> getRestriction(ItemKey item){
