@@ -35,7 +35,7 @@ public class Restriction {
 
     public boolean isRestricted(RestrictionTypes type, @Nullable World world) {
         if (!restrictions.contains(type)) return false;
-        if (world == null ) return true;
+        if (world == null) return !dimBlacklist;
         if (dimBlacklist) return dims.contains(world.getUID());
         else return !dims.contains(world.getUID());
     }
