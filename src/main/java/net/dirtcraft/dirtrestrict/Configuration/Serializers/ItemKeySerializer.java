@@ -11,11 +11,12 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ItemKeySerializer implements TypeSerializer<ItemKey> {
     @Nullable
     @Override
     public ItemKey deserialize(@NonNull TypeToken<?> type, @NonNull ConfigurationNode value) throws ObjectMappingException {
-        if (value.getString() == null) return null;
+        if (value.getString() == null || value.getString().equalsIgnoreCase("")) return null;
         final String[] key = value.getString().split(":");
         final String modId = key[0];
         final Byte meta = CommandUtils.parseByte(key[key.length -1]).orElse(null);
@@ -35,6 +36,6 @@ public class ItemKeySerializer implements TypeSerializer<ItemKey> {
     @Override
     public void serialize(@NonNull TypeToken<?> type, @Nullable ItemKey obj, @NonNull ConfigurationNode value) throws ObjectMappingException {
         if (obj == null || obj.item == 0 || Item.getItemById(obj.item) == null) return;
-        value.setValue(obj.getUniqueIdentifier());
+        else value.setValue(obj.getUniqueIdentifier());
     }
 }

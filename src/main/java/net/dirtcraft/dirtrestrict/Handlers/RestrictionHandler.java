@@ -16,10 +16,10 @@ public abstract class RestrictionHandler implements Listener {
     protected final SoundHandler soundHandler = dirtRestrict.getSoundHandler();
 
     protected void printMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason) {
-        System.out.println(getMessage(p, type, itemKey, reason));
+        p.sendMessage(getMessage(type, itemKey, reason));
     }
 
-    private String getMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason){
+    private String getMessage(RestrictionTypes type, ItemKey itemKey, String reason){
         switch (type){
             case OWN: return "You are not allowed to own this item!";
             case USE: return "You are not allowed to use this item!";

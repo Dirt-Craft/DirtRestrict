@@ -19,8 +19,8 @@ public class HashSetSerializer implements TypeSerializer<HashSet<?>> {
 
     @Override
     public void serialize(@NonNull TypeToken<?> type, @Nullable HashSet<?> obj, @NonNull ConfigurationNode value) throws ObjectMappingException {
-        if (obj == null) return;
-        value.setValue(new ArrayList<>(obj));
+        if (obj == null) value.setValue(new ArrayList<>());
+        else value.setValue(new ArrayList<>(obj));
     }
 
 }

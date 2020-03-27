@@ -1,7 +1,10 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.World;
 
 import java.util.Optional;
 
@@ -29,6 +32,15 @@ public class CommandUtils {
     public static Optional<Integer> parseInt(String s){
         try {
             return Optional.of(Integer.parseInt(s));
+        } catch (Exception ignored){
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<World> parseWorld(String s){
+        Server server = Bukkit.getServer();
+        try {
+            return Optional.ofNullable(server.getWorld(s));
         } catch (Exception ignored){
             return Optional.empty();
         }

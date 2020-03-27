@@ -9,12 +9,14 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.EnumSetSerializer;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.HashSetSerializer;
 import net.dirtcraft.dirtrestrict.Configuration.Serializers.ItemKeySerializer;
+import net.dirtcraft.dirtrestrict.Configuration.Serializers.UUIDSerializer;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+import org.bukkit.World;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,7 @@ public class RestrictionList {
         serializers.registerType(TypeToken.of(ItemKey.class), new ItemKeySerializer());
         serializers.registerType(new TypeToken<EnumSet<RestrictionTypes>>(){}, new EnumSetSerializer<>());
         serializers.registerType(new TypeToken<HashSet<?>>(){}, new HashSetSerializer());
+        serializers.registerType(new TypeToken<UUID>(){}, new UUIDSerializer());
         loader = HoconConfigurationLoader.builder()
                 .setFile(loc)
                 .build();
@@ -113,6 +116,26 @@ public class RestrictionList {
         restrictions.remove(key);
         restrictions.put(key.getAll(), restriction);
         return true;
+    }
+
+    public Optional<Boolean> isBlackList(ItemKey key){
+        if (!restrictions.containsKey(key)) return Optional.empty();
+        else return Optional.of(restrictions.get(key).isDimsBlacklist());
+    }
+
+    public Optional<Boolean> toggleBlacklist(ItemKey key){
+        if (!restrictions.containsKey(key)) return Optional.empty();
+        else return Optional.of(restrictions.get(key).toggleBlacklist());
+    }
+
+    public Optional<Boolean> addDim(ItemKey key, World world){
+        if (!restrictions.containsKey(key)) return Optional.empty();
+        else return Optional.of(restrictions.get(key).addDim(world));
+    }
+
+    public Optional<Boolean> removeDim(ItemKey key, World world){
+        if (!restrictions.containsKey(key)) return Optional.empty();
+        else return Optional.of(restrictions.get(key).removeDim(world));
     }
 
     public Optional<Restriction> getRestriction(ItemKey item){

@@ -19,6 +19,9 @@ public class DirtRestrictCommand implements CommandExecutor {
         addCommand(new AddRestriction());
         addCommand(new EditRestriction());
         addCommand(new SetUniversal());
+        addCommand(new ToggleDimBlacklist());
+        addCommand(new AddDim());
+        addCommand(new RemoveDim());
     }
 
     private void addCommand(SubCommand command){

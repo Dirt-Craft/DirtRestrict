@@ -8,11 +8,13 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TextUtils {
     public static TextComponent getRestrictionText(ItemKey item, Restriction entry, char main, char trim, char reason, boolean hasPerms){
@@ -34,19 +36,31 @@ public class TextUtils {
         return arr;
     }
 
-    public static BaseComponent[] getRemoveLinks(ItemKey key){
-        BaseComponent[] arr = new BaseComponent[key.data == null ? 1 : 2];
+    public static BaseComponent[] getRemoveLinks(ItemKey key, Restriction restriction){
+        BaseComponent[] arr = new BaseComponent[key.data == null ? 3 : 4];
         {
             TextComponent text = new TextComponent("§3[§6Remove Ban§3]");
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick remove this entry.")));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(RemoveRestriction.ALIAS, key)));
             arr[0] = text;
         }
+        {
+            TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Whitelist Dims§3]" : " §3[§6Blacklist Dims§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nToggle the dims list to whitelist / blacklist.")));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleDimBlacklist.ALIAS, key)));
+            arr[1] = text;
+        }
+        {
+            TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Blacklist World§3]" : " §3[§6Whitelist World§3]");
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nAdds the current world to the whitelist / blacklist.")));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleDimBlacklist.ALIAS, key)));
+            arr[2] = text;
+        }
         if (key.data != null){
             TextComponent text = new TextComponent(" §3[§6Set Universal§3]");
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick make this entry ignore meta.")));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SetUniversal.ALIAS, key)));
-            arr[1] = text;
+            arr[3] = text;
         }
         return arr;
     }
@@ -114,6 +128,25 @@ public class TextUtils {
 
     private static String getCommand(String sub, ItemKey itemKey, String args){
         return getCommand(sub, itemKey) + " " + args;
+    }
+
+    public static BaseComponent getWorlds(Collection<UUID> set, ItemKey itemKey, boolean blackList){
+        Server server = Bukkit.getServer();
+        TextComponent x = new TextComponent(blackList? "§6Banned Worlds: [" : "Permitted Worlds: [");
+        Iterator<UUID> uuidIterator = set.iterator();
+        while (uuidIterator.hasNext()){
+            x.addExtra(formatWorld(server.getWorld(uuidIterator.next()), itemKey, blackList ? 'c' : 'a'));
+            if (uuidIterator.hasNext()) x.addExtra(", ");
+            else x.addExtra("]");
+        }
+        return x;
+    }
+
+    private static BaseComponent formatWorld(World world, ItemKey itemKey, char color){
+        TextComponent response = new TextComponent("§" + color + world.getName());
+        response.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to  remove this world.")));
+        response.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(RemoveDim.ALIAS, itemKey, world.getName())));
+        return response;
     }
 
     private static BaseComponent[] getHover(ItemKey itemKey, Restriction restriction, boolean hasPerms){

@@ -46,9 +46,10 @@ public class EditRestriction implements SubCommand {
         }
 
         sender.sendMessage("§4§m=============[§4§l EDITOR §4§m]=============");
-        player.spigot().sendMessage(TextUtils.getRemoveLinks(itemKey));
+        player.spigot().sendMessage(TextUtils.getRemoveLinks(itemKey, restriction.get()));
         sender.sendMessage("§6Name: §7" + itemKey.getName() + " §r[§b" + itemKey.item + (itemKey.data == null? "§r]" : "§r:§3" + itemKey.data + "§r]"));
         sender.sendMessage("§6ID: §7" + itemKey.getUniqueIdentifier());
+        player.spigot().sendMessage(TextUtils.getWorlds(restriction.get().getDims(), itemKey, restriction.get().isDimsBlacklist()));
         player.spigot().sendMessage(TextUtils.getReason(itemKey, restriction.get()));
         TextUtils.getToggleLinks(itemKey, restriction.get()).forEach(player.spigot()::sendMessage);
         sender.sendMessage("§4§m==================================");

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
-@SuppressWarnings({"UnstableApiUsage", "unchecked", "ConstantConditions"})
+@SuppressWarnings({"UnstableApiUsage", "unchecked"})
 public class EnumSetSerializer<T extends Enum<T>> implements TypeSerializer<EnumSet<T>> {
     @Nullable
     @Override
@@ -31,6 +31,7 @@ public class EnumSetSerializer<T extends Enum<T>> implements TypeSerializer<Enum
 
     @Override
     public void serialize(@NonNull TypeToken<?> type, @Nullable EnumSet<T> obj, @NonNull ConfigurationNode value) throws ObjectMappingException {
-        value.setValue(new TypeToken<List<String>>(){}, obj.stream().map(T::toString).collect(Collectors.toList()));
+        if (obj == null) value.setValue(new ArrayList<String>());
+        else value.setValue(new TypeToken<List<String>>(){}, obj.stream().map(T::toString).collect(Collectors.toList()));
     }
 }
