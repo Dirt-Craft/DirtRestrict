@@ -19,11 +19,11 @@ public class DropListener extends RestrictionHandler {
         Location location = event.getItemDrop().getLocation();
         ItemKey itemKey = new ItemKey(event.getItemDrop().getItemStack().getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, location);
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, type, location);
 
         if (bannedInfo.isPresent()) return;
         type = RestrictionTypes.DROP;
-        bannedInfo = itemKey.hasPermission(p, type, location);
+        bannedInfo = itemKey.isRestricted(p, type, location);
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);

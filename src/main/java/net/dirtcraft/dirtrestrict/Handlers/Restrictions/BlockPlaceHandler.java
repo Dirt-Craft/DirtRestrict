@@ -15,7 +15,7 @@ public class BlockPlaceHandler extends RestrictionHandler {
     private void onPlace(BlockPlaceEvent event) {
         if (event.getItemInHand() == null) return;
         final ItemKey itemKey = new ItemKey(event.getItemInHand().getData());
-        final Optional<Restriction> bannedInfo = itemKey.hasPermission(event.getPlayer(), RestrictionTypes.PLACE, event.getBlock().getLocation());
+        final Optional<Restriction> bannedInfo = itemKey.isRestricted(event.getPlayer(), RestrictionTypes.PLACE, event.getBlock().getLocation());
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
             soundHandler.sendEndermanTeleportSound(event.getPlayer());

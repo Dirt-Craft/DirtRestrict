@@ -61,7 +61,7 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 0 for banned items
             if (item0 != null) {
                 itemKey = new ItemKey(item0.getData());
-                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
+                bannedInfo = itemKey.isRestricted(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(0, Slot0);
                 }
@@ -69,7 +69,7 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 1 for banned items
             if (item1 != null) {
                 itemKey = new ItemKey(item1.getData());
-                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
+                bannedInfo = itemKey.isRestricted(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(1, Slot1);
                 }
@@ -77,7 +77,7 @@ public class BrewingHandler extends RestrictionHandler {
             //Check slot 2 for banned items
             if (item2 != null) {
                 itemKey = new ItemKey(item2.getData());
-                bannedInfo = itemKey.hasPermission(masterPlayer, RestrictionTypes.BREWING, location);
+                bannedInfo = itemKey.isRestricted(masterPlayer, RestrictionTypes.BREWING, location);
                 if (bannedInfo.isPresent()) {
                     event.getContents().setItem(2, Slot2);
                 }

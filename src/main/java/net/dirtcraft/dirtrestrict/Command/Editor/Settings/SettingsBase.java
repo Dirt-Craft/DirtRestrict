@@ -19,6 +19,7 @@ public class SettingsBase implements SubCommand{
     {
         addCommand(new SetBypass());
         addCommand(new SetVerbose());
+        addCommand(new SetSound());
     }
 
     private void addCommand(SubCommand command){

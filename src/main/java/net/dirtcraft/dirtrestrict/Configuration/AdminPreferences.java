@@ -5,6 +5,7 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.AdminProfile;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.BypassSettings;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,6 +48,14 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
         UUID uuid = player.getUniqueId();
         if (!config.containsKey(uuid)) return false;
         config.get(uuid).setShowPermissionNodes(setting);
+        save();
+        return true;
+    }
+
+    public boolean setSound(Player player, Sound sound) {
+        UUID uuid = player.getUniqueId();
+        if (!config.containsKey(uuid)) return false;
+        config.get(uuid).setSound(sound);
         save();
         return true;
     }

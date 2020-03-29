@@ -24,11 +24,11 @@ public class CreativeHandler extends RestrictionHandler {
         Player p = (Player) event.getWhoClicked();
         ItemKey itemKey = new ItemKey(cursorItem.getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (bannedInfo.isPresent()) return;
         type = RestrictionTypes.CREATIVE;
-        bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);
@@ -47,11 +47,11 @@ public class CreativeHandler extends RestrictionHandler {
 
         ItemKey itemKey = new ItemKey(event.getCurrentItem().getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (bannedInfo.isPresent()) return;
         type = RestrictionTypes.CREATIVE;
-        bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);
@@ -67,11 +67,11 @@ public class CreativeHandler extends RestrictionHandler {
         ItemStack item = p.getItemInHand();
         ItemKey itemKey = new ItemKey(item.getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (bannedInfo.isPresent()) return;
         type = RestrictionTypes.CREATIVE;
-        bannedInfo = itemKey.hasPermission(p, type, p.getLocation());
+        bannedInfo = itemKey.isRestricted(p, type, p.getLocation());
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);

@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.item.Item;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -111,37 +112,29 @@ public class ItemKey {
         return new ItemKey(item, null);
     }
 
-    public Optional<Restriction> hasPermission(@Nullable Player player, @Nonnull RestrictionTypes type, @Nullable Location location){
-        return isRestricted(type, location).flatMap(r->checkPerms(player,type,location,r));
-    }
-
-    private Optional<Restriction> isRestricted(RestrictionTypes type, @Nullable Location location){
+    public Optional<Restriction> isRestricted(@Nullable Player player, @Nonnull RestrictionTypes type, @Nullable Location location){
         final World world = location == null ? null : location.getWorld();
-        Optional<Restriction> optRestriction = dirtRestrict.getRestrictions().getRestriction(this);
-        if (!optRestriction.isPresent()) optRestriction = dirtRestrict.getRestrictions().getRestriction(getAll());
-        if (optRestriction.isPresent() && optRestriction.get().isRestricted(type, world)) return optRestriction;
+        Optional<Restriction> restriction = dirtRestrict.getRestrictions().getRestriction(this);
+        if (!restriction.isPresent()) restriction = dirtRestrict.getRestrictions().getRestriction(getAll());
+        if (!restriction.isPresent() || !restriction.get().isRestricted(type, world)) return Optional.empty();
+        if (player == null || !checkPerms(player, type, location, restriction.get())) return restriction;
         else return Optional.empty();
     }
 
-    private Optional<Restriction> checkPerms(Player player, RestrictionTypes type, Location location, Restriction restriction){
+    private boolean checkPerms(Player player, RestrictionTypes rawType, Location location, Restriction restriction){
         final String itemId = getUniqueIdentifier(false).replace(":", ".");
         final String meta = data == null? "*" : String.valueOf(data);
-        final String sType = type.getName();
+        final String type = rawType.getName();
         final String world = location == null? "*" : location.getWorld() == null? "*" : location.getWorld().getName();
-        final boolean bypass = checkPerms(player, itemId, meta, sType, world);
-        if (bypass) return Optional.empty();
-        else return Optional.of(restriction);
-    }
-
-    private boolean checkPerms(Player player, String itemId, String meta, String type, String world){
         final Permission fullyQualified = getPermissionNode(itemId, meta, type, world);
         boolean notify = false;
+        Sound sound = Sound.ZOMBIE_METAL;
         if (player.hasPermission(PERMISSION_ADMIN)) {
             final AdminProfile profile = DirtRestrict.getInstance().getPreferences().getPreferences(player);
             final boolean verbose = profile.isShowPermissionNodes();
             final BypassSettings setting = profile.getBypassSetting();
             if (verbose) {
-                TextComponent permissionNode = new TextComponent("§6§l[§cDirt§fRestrict§6§l] §dVerbose: §a" + fullyQualified);
+                TextComponent permissionNode = new TextComponent("§6§l[§cDirt§fRestrict§6§l] §dVerbose: §a" + fullyQualified.getName());
                 permissionNode.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, fullyQualified.getName()));
                 permissionNode.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to copy node.")));
                 player.spigot().sendMessage(permissionNode);
@@ -150,6 +143,7 @@ public class ItemKey {
                 return true;
             } else if (setting == BypassSettings.NOTIFY) {
                 notify = true;
+                sound = profile.getSound();
             }
         }
 
@@ -158,7 +152,7 @@ public class ItemKey {
         if (player.hasPermission(getPermissionNode(itemId, meta, "*", world))) return true;
         if (player.hasPermission(getPermissionNode(itemId, "*", "*", world))) return true;
         if (notify){
-            dirtRestrict.getSoundHandler().sendAdminNotification(player);
+            dirtRestrict.getSoundHandler().sendAdminNotification(player, sound);
             return true;
         }
         return false;

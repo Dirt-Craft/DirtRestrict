@@ -27,7 +27,7 @@ public class UsageHandler extends RestrictionHandler {
         final Block block = src.getBlock();
         if (block == null) return;
         ItemKey itemKey = new ItemKey(block);
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, RestrictionTypes.USE, p.getLocation());
         if (bannedInfo.isPresent()) {
             event.setCancelled(true);
             soundHandler.sendPlingSound(p);
@@ -45,7 +45,7 @@ public class UsageHandler extends RestrictionHandler {
 
         if (interactingBlock != null) {
             itemKey = new ItemKey(interactingBlock);
-            bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+            bannedInfo = itemKey.isRestricted(p, RestrictionTypes.USE, p.getLocation());
         }
 
         if (bannedInfo.isPresent()) {
@@ -55,10 +55,10 @@ public class UsageHandler extends RestrictionHandler {
         } else {
             if (!event.isBlockInHand()) {
                 itemKey = new ItemKey(item.getData());
-                bannedInfo = itemKey.hasPermission(p, RestrictionTypes.OWN, p.getLocation());
+                bannedInfo = itemKey.isRestricted(p, RestrictionTypes.OWN, p.getLocation());
 
                 if (bannedInfo.isPresent()) return;
-                bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+                bannedInfo = itemKey.isRestricted(p, RestrictionTypes.USE, p.getLocation());
 
                 if (!bannedInfo.isPresent()) return;
                 event.setCancelled(true);
@@ -101,7 +101,7 @@ public class UsageHandler extends RestrictionHandler {
             ItemStack item = p.getItemInHand();
 
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+            Optional<Restriction> bannedInfo = itemKey.isRestricted(p, RestrictionTypes.USE, p.getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
             }
@@ -111,7 +111,7 @@ public class UsageHandler extends RestrictionHandler {
             ItemStack item = p.getItemInHand();
 
             ItemKey itemKey = new ItemKey(item.getData());
-            Optional<Restriction> bannedInfo = itemKey.hasPermission(p, RestrictionTypes.USE, p.getLocation());
+            Optional<Restriction> bannedInfo = itemKey.isRestricted(p, RestrictionTypes.USE, p.getLocation());
             if (bannedInfo.isPresent()) {
                 event.setCancelled(true);
             }

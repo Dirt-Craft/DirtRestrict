@@ -25,12 +25,12 @@ public class PickupListener extends RestrictionHandler {
 
         ItemKey itemKey = new ItemKey(item.getData());
         RestrictionTypes type = RestrictionTypes.OWN;
-        Optional<Restriction> bannedInfo = itemKey.hasPermission(p, type, location);
+        Optional<Restriction> bannedInfo = itemKey.isRestricted(p, type, location);
 
         if (bannedInfo.isPresent()) return;
 
         type = RestrictionTypes.PICKUP;
-        bannedInfo = itemKey.hasPermission(p, type, location);
+        bannedInfo = itemKey.isRestricted(p, type, location);
 
         if (!bannedInfo.isPresent()) return;
         event.setCancelled(true);
