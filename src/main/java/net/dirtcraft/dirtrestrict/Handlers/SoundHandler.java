@@ -36,6 +36,6 @@ public class SoundHandler extends RestrictionHandler {
     }
 
     public void sendAdminNotification(Player p) {
-        if (sounds) p.playSound(p.getLocation(), Sound.CREEPER_HISS, 1F, 1F);
+        if (sounds) p.playSound(p.getLocation(), Sound.VILLAGER_YES, 10F, 10F);
     }
 }

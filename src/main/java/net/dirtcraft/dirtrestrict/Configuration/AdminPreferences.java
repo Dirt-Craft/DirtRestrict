@@ -1,7 +1,8 @@
 package net.dirtcraft.dirtrestrict.Configuration;
 
 import com.google.common.reflect.TypeToken;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.*;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.AdminProfile;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.BypassSettings;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,7 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfile>> implements Listener {
 
@@ -21,30 +23,30 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
 
     @EventHandler
     public void onPlayerLogin(PlayerJoinEvent event){
-        if (event.getPlayer() == null || !preferences.containsKey(event.getPlayer().getUniqueId()) || event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN)) return;
-        preferences.remove(event.getPlayer().getUniqueId());
+        if (event.getPlayer() == null || !config.containsKey(event.getPlayer().getUniqueId()) || event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN)) return;
+        config.remove(event.getPlayer().getUniqueId());
         save();
     }
 
     public AdminProfile getPreferences(Player player){
         UUID uuid = player.getUniqueId();
-        if (!preferences.containsKey(uuid)) preferences.put(uuid, new AdminProfile());
+        if (!config.containsKey(uuid)) config.put(uuid, new AdminProfile());
         save();
-        return preferences.get(uuid);
+        return config.get(uuid);
     }
 
     public boolean setBypassSettings(Player player, BypassSettings setting){
         UUID uuid = player.getUniqueId();
-        if (!preferences.containsKey(uuid)) return false;
-        preferences.get(uuid).setBypassSetting(setting);
+        if (!config.containsKey(uuid)) return false;
+        config.get(uuid).setBypassSetting(setting);
         save();
         return true;
     }
 
     public boolean setVerbose(Player player, boolean setting){
         UUID uuid = player.getUniqueId();
-        if (!preferences.containsKey(uuid)) return false;
-        preferences.get(uuid).setShowPermissionNodes(setting);
+        if (!config.containsKey(uuid)) return false;
+        config.get(uuid).setShowPermissionNodes(setting);
         save();
         return true;
     }

@@ -1,7 +1,6 @@
 package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.TextUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -15,13 +14,16 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+
+import static net.dirtcraft.dirtrestrict.Configuration.Permission.*;
 
 public class ItemKey {
     private static final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
@@ -84,7 +86,7 @@ public class ItemKey {
         final Item item = Item.getItemById(this.item);
         final GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(item);
         String itemID = id.modId + ":" + id.name;
-        if (!meta || dirtRestrict == null) return itemID;
+        if (!meta || data == null) return itemID;
         else return itemID + ":" + data;
     }
 
@@ -132,20 +134,22 @@ public class ItemKey {
     }
 
     private boolean checkPerms(Player player, String itemId, String meta, String type, String world){
-        final String fullyQualified = getPermissionNode(itemId, meta, type, world);
-        if (player.hasPermission(Permission.PERMISSION_ADMIN)) {
+        final Permission fullyQualified = getPermissionNode(itemId, meta, type, world);
+        boolean notify = false;
+        if (player.hasPermission(PERMISSION_ADMIN)) {
             final AdminProfile profile = DirtRestrict.getInstance().getPreferences().getPreferences(player);
             final boolean verbose = profile.isShowPermissionNodes();
             final BypassSettings setting = profile.getBypassSetting();
             if (verbose) {
                 TextComponent permissionNode = new TextComponent("§6§l[§cDirt§fRestrict§6§l] §dVerbose: §a" + fullyQualified);
-                permissionNode.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, fullyQualified));
+                permissionNode.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, fullyQualified.getName()));
                 permissionNode.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextUtils.getMono("§3§nClick to copy node.")));
                 player.spigot().sendMessage(permissionNode);
             }
-            if (setting == BypassSettings.NOTIFY) {
-                dirtRestrict.getSoundHandler().sendAdminNotification(player);
+            if (setting == BypassSettings.IGNORE) {
                 return true;
+            } else if (setting == BypassSettings.NOTIFY) {
+                notify = true;
             }
         }
 
@@ -153,12 +157,16 @@ public class ItemKey {
         if (player.hasPermission(getPermissionNode(itemId, "*", type, world))) return true;
         if (player.hasPermission(getPermissionNode(itemId, meta, "*", world))) return true;
         if (player.hasPermission(getPermissionNode(itemId, "*", "*", world))) return true;
+        if (notify){
+            dirtRestrict.getSoundHandler().sendAdminNotification(player);
+            return true;
+        }
         return false;
     }
 
-    private String getPermissionNode(String... check){
-        StringBuilder sb = new StringBuilder("dirtrestrict.bypass");
+    private Permission getPermissionNode(String... check){
+        StringBuilder sb = new StringBuilder(BYPASS_BASE);
         Arrays.stream(check).forEach(s->sb.append(".").append(s));
-        return sb.toString();
+        return new Permission(sb.toString(), PermissionDefault.FALSE);
     }
 }

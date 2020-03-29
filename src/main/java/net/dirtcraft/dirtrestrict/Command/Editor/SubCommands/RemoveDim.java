@@ -49,7 +49,7 @@ public class RemoveDim implements SubCommand {
         if (!response.get()){
             sender.sendMessage("§cThe specified restriction does not exist.");
         } else {
-            sender.sendMessage("§aSuccessfully removed world from " + (blacklist.get()? "blacklist." : "whitelist."));
+            sender.sendMessage("§aSuccessfully removed world from " + (!blacklist.get()? "blacklist." : "whitelist."));
             if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(itemKey));
         }
 

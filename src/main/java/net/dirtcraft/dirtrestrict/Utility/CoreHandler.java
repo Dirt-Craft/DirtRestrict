@@ -1,7 +1,6 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.entity.Player;
 

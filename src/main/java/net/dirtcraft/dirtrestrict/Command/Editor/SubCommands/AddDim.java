@@ -49,7 +49,7 @@ public class AddDim implements SubCommand {
         if (!response.get()){
             sender.sendMessage("§cThe specified restriction does not exist.");
         } else {
-            sender.sendMessage("§aSuccessfully added world to " + (blacklist.get()? "blacklist." : "whitelist."));
+            sender.sendMessage("§aSuccessfully added world to " + (!blacklist.get()? "blacklist." : "whitelist."));
             if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(itemKey));
         }
 

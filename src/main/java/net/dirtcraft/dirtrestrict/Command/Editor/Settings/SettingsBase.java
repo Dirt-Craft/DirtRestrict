@@ -1,6 +1,5 @@
 package net.dirtcraft.dirtrestrict.Command.Editor.Settings;
 
-import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.AdminProfile;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;

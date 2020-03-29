@@ -7,6 +7,7 @@ import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.TextUtils;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public class EditRestriction implements SubCommand {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length < 1 || !(sender instanceof Player)) return false;
         final Player player = (Player) sender;
+        final World world = player.getWorld();
         final Optional<Material> optItem = parseMaterial(args[0]);
         final Optional<Byte> optByte = args.length > 1? parseByte(args[1]) : Optional.empty();
         if (!optItem.isPresent()) return false;
@@ -51,7 +53,7 @@ public class EditRestriction implements SubCommand {
         sender.sendMessage("§6ID: §7" + itemKey.getUniqueIdentifier());
         player.spigot().sendMessage(TextUtils.getWorlds(restriction.get().getDims(), itemKey, restriction.get().isDimsBlacklist()));
         player.spigot().sendMessage(TextUtils.getReason(itemKey, restriction.get()));
-        TextUtils.getToggleLinks(itemKey, restriction.get()).forEach(player.spigot()::sendMessage);
+        TextUtils.getToggleLinks(itemKey, restriction.get(), world).forEach(player.spigot()::sendMessage);
         sender.sendMessage("§4§m==================================");
         return false;
     }

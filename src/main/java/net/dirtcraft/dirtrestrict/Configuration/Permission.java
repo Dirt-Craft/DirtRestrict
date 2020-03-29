@@ -10,4 +10,6 @@ public class Permission {
     public static final String COMMAND_MODIFY_DIMS = "dirtrestrict.edit.remove";
 
     public static final String PERMISSION_ADMIN = "dirtrestrict.admin";
+
+    public static final String BYPASS_BASE = "dirtrestrict.bypass";
 }
