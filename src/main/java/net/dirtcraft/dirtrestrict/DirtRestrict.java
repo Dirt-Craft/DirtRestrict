@@ -1,7 +1,8 @@
 package net.dirtcraft.dirtrestrict;
 
 import net.dirtcraft.dirtrestrict.Command.BannedItemCommand;
-import net.dirtcraft.dirtrestrict.Command.DirtRestrictCommand;
+import net.dirtcraft.dirtrestrict.Command.Editor.EditorBase;
+import net.dirtcraft.dirtrestrict.Configuration.AdminPreferences;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import net.dirtcraft.dirtrestrict.Handlers.Restrictions.*;
@@ -19,12 +20,14 @@ public final class DirtRestrict extends JavaPlugin {
     private PluginManager manager;
     private static DirtRestrict INSTANCE;
     private RestrictionList restrictions;
+    private AdminPreferences preferences;
     private SoundHandler soundHandler;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
         restrictions = new RestrictionList(this);
+        preferences = new AdminPreferences(this);
         soundHandler = new SoundHandler();
         manager = Bukkit.getPluginManager();
         handlers = Arrays.asList(
@@ -41,7 +44,7 @@ public final class DirtRestrict extends JavaPlugin {
         );
         handlers.forEach(h->manager.registerEvents(h, this));
         this.getCommand("bannedItems").setExecutor(new BannedItemCommand());
-        this.getCommand("dirtrestrict").setExecutor(new DirtRestrictCommand());
+        this.getCommand("dirtrestrict").setExecutor(new EditorBase());
     }
 
     @Override
@@ -63,5 +66,9 @@ public final class DirtRestrict extends JavaPlugin {
 
     public SoundHandler getSoundHandler() {
         return soundHandler;
+    }
+
+    public AdminPreferences getPreferences() {
+        return preferences;
     }
 }

@@ -9,7 +9,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
 
 @SuppressWarnings({"UnstableApiUsage", "unchecked", "ConstantConditions", "rawtypes"})
 public class HashSetSerializer implements TypeSerializer<HashSet<?>> {

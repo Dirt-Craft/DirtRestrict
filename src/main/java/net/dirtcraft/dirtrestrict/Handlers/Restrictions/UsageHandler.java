@@ -4,7 +4,6 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;

@@ -1,6 +1,7 @@
-package net.dirtcraft.dirtrestrict.Command;
+package net.dirtcraft.dirtrestrict.Command.Editor;
 
-import net.dirtcraft.dirtrestrict.Command.SubCommands.*;
+import net.dirtcraft.dirtrestrict.Command.SubCommand;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DirtRestrictCommand implements CommandExecutor {
+public class EditorBase implements CommandExecutor {
     private final Map<String, SubCommand> subCommandMap = new HashMap<>();
 
     {

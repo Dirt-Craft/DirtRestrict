@@ -1,7 +1,5 @@
 package net.dirtcraft.dirtrestrict.Configuration;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.reflect.TypeToken;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;

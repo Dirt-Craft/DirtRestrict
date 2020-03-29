@@ -6,7 +6,6 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

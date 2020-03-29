@@ -1,4 +1,4 @@
-package net.dirtcraft.dirtrestrict.Command.SubCommands;
+package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands;
 
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;

@@ -1,14 +1,11 @@
 package net.dirtcraft.dirtrestrict.Handlers;
 
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-
-import java.util.Optional;
 
 public abstract class RestrictionHandler implements Listener {
     protected final DirtRestrict dirtRestrict = DirtRestrict.getInstance();

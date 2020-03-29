@@ -1,4 +1,4 @@
-package net.dirtcraft.dirtrestrict.Command.SubCommands;
+package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands;
 
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
@@ -17,9 +17,10 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
-public class SetUniversal implements SubCommand {
+public class AddRestriction implements SubCommand {
 
-    public static final String ALIAS = "SetUniversal";
+    public static final String ALIAS = "Add";
+
     @Override
     public String getName() {
         return ALIAS;
@@ -27,11 +28,11 @@ public class SetUniversal implements SubCommand {
 
     @Override
     public String getPermission() {
-        return Permission.COMMAND_MODIFY_META;
+        return Permission.COMMAND_MODIFY_ADD;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         RestrictionList restrictions = DirtRestrict.getInstance().getRestrictions();
         final Optional<Material> material;
         final Optional<Byte> b;
@@ -39,6 +40,10 @@ public class SetUniversal implements SubCommand {
             final ItemStack hand = (((Player) sender).getItemInHand());
             material = Optional.of(hand.getType());
             b = Optional.of(hand.getData().getData());
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("-u")){
+            final ItemStack hand = (((Player) sender).getItemInHand());
+            material = Optional.of(hand.getType());
+            b = Optional.empty();
         } else if(args.length == 1) {
             material = parseMaterial(args[0]);
             b = Optional.empty();
@@ -49,11 +54,12 @@ public class SetUniversal implements SubCommand {
 
         if ( !material.isPresent() ) return false;
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
-        final boolean success = restrictions.removeMeta(bannedItem);
-        final String response = "§aChanged §r\"§5" + bannedItem.getName() +"§r\" §ato ignore meta.";
+        if (bannedItem.getItem() == null) return false;
+        final boolean success = restrictions.addBan(bannedItem);
+        final String response = "§aAdded §r\"§5" + bannedItem.getName() +"§r\" §ato the ban list.";
 
         if (success) sender.sendMessage(response);
-        else sender.sendMessage("§cThis item does not exist!");
+        else sender.sendMessage("§cThis item is already banned!");
         if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
 
         return success;

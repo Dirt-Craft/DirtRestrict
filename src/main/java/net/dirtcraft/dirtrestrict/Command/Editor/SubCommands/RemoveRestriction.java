@@ -1,8 +1,7 @@
-package net.dirtcraft.dirtrestrict.Command.SubCommands;
+package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands;
 
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
@@ -13,13 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
-public class ToggleDimBlacklist implements SubCommand {
-    public final static String ALIAS = "DimBlacklist";
+public class RemoveRestriction implements SubCommand {
+
+    public static final String ALIAS = "Remove";
     @Override
     public String getName() {
         return ALIAS;
@@ -27,11 +26,11 @@ public class ToggleDimBlacklist implements SubCommand {
 
     @Override
     public String getPermission() {
-        return Permission.COMMAND_MODIFY_DIMS;
+        return Permission.COMMAND_MODIFY_REMOVE;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         final RestrictionList restrictions = DirtRestrict.getInstance().getRestrictions();
         if (args.length < 1) return false;
         final Optional<Material> material = parseMaterial(args[0]);
@@ -44,13 +43,13 @@ public class ToggleDimBlacklist implements SubCommand {
             b = Optional.empty();
         }
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
-        Optional<Boolean> blacklist = restrictions.toggleBlacklist(bannedItem);
-        if (!blacklist.isPresent()) return false;
-        final String response = "§aDims set to " + (blacklist.get()? "blacklist" : "whitelist") + " for §r\"§5" + bannedItem.getName() + "§r\"";
+        final boolean success = restrictions.revokeBan(bannedItem);
+        final String response = "§aUnbanned §r\"§5" + bannedItem.getName() + "§r\"";
 
-        sender.sendMessage(response);
-        if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
+        if (success) sender.sendMessage(response);
+        else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
+        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem, false, true));
 
-        return true;
+        return success;
     }
 }

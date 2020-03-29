@@ -5,7 +5,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.bukkit.World;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.UUID;
 
 @ConfigSerializable
 public class Restriction {

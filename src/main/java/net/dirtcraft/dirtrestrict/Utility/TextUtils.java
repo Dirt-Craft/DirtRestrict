@@ -1,9 +1,12 @@
 package net.dirtcraft.dirtrestrict.Utility;
 
-import net.dirtcraft.dirtrestrict.Command.SubCommands.*;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
-import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
+import com.google.common.collect.Lists;
+import joptsimple.internal.Strings;
+import net.dirtcraft.dirtrestrict.Command.Editor.Settings.SetBypass;
+import net.dirtcraft.dirtrestrict.Command.Editor.Settings.SetVerbose;
+import net.dirtcraft.dirtrestrict.Command.Editor.Settings.SettingsBase;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -14,7 +17,6 @@ import org.bukkit.World;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class TextUtils {
     public static TextComponent getRestrictionText(ItemKey item, Restriction entry, char main, char trim, char reason, boolean hasPerms){
@@ -131,6 +133,10 @@ public class TextUtils {
         return "/dirtrestrict " + sub + " " + item;
     }
 
+    private static String getCommand(String... args){
+        return "/dirtrestrict " + Strings.join(args, " ");
+    }
+
     private static String getCommand(String sub, ItemKey itemKey, String args){
         return getCommand(sub, itemKey) + " " + args;
     }
@@ -165,5 +171,74 @@ public class TextUtils {
         hover.add(new TextComponent("\n§7id: " + itemKey.getUniqueIdentifier()));
         if (hasPerms) hover.add(new TextComponent("\n§3§nClick to edit this entry."));
         return hover.toArray(new BaseComponent[0]);
+    }
+
+    public static BaseComponent[] getBypassSlider(AdminProfile profile){
+        final ArrayList<BaseComponent> result = new ArrayList<>();
+        result.add(new TextComponent("§6Bypass: "));
+        final boolean isRespect = profile.getBypassSetting() == BypassSettings.RESPECT;
+        final boolean isNotify = profile.getBypassSetting() == BypassSettings.NOTIFY;
+        final boolean isIgnore = profile.getBypassSetting() == BypassSettings.IGNORE;
+
+        final BaseComponent[] respect = TextComponent.fromLegacyText(isRespect? "§7RESPECT§r" : "§6§l[ §aRESPECT §6§l]§r");
+        if (isRespect) result.addAll(Lists.newArrayList(respect));
+        else {
+            final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
+            final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetBypass.ALIAS, BypassSettings.RESPECT.toString()));
+            Arrays.stream(respect)
+                    .peek(t->t.setHoverEvent(hoverEvent))
+                    .peek(t->t.setClickEvent(clickEvent))
+                    .forEach(result::add);
+        }
+
+        final BaseComponent[] notify = TextComponent.fromLegacyText(isRespect? "§7NOTIFY§r" : "§6§l[ §aNOTIFY §6§l]§r");
+        if (isNotify) result.addAll(Lists.newArrayList(notify));
+        else {
+            final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
+            final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetBypass.ALIAS, BypassSettings.NOTIFY.toString()));
+            Arrays.stream(notify)
+                    .peek(t->t.setHoverEvent(hoverEvent))
+                    .peek(t->t.setClickEvent(clickEvent))
+                    .forEach(result::add);
+        }
+
+        final BaseComponent[] ignore = TextComponent.fromLegacyText(isRespect? "§7IGNORE§r" : "§6§l[ §aIGNORE §6§l]§r");
+        if (isIgnore) result.addAll(Lists.newArrayList(ignore));
+        else {
+            final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
+            final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetBypass.ALIAS, BypassSettings.IGNORE.toString()));
+            Arrays.stream(ignore)
+                    .peek(t->t.setHoverEvent(hoverEvent))
+                    .peek(t->t.setClickEvent(clickEvent))
+                    .forEach(result::add);
+        }
+        return result.toArray(new BaseComponent[0]);
+    }
+
+     public static BaseComponent[] getVerboseSlider(AdminProfile profile){
+        final ArrayList<BaseComponent> result = new ArrayList<>();
+        result.add(new TextComponent("§6Verbose: "));
+        final boolean verbose = profile.isShowPermissionNodes();
+        final BaseComponent[] setYes = TextComponent.fromLegacyText(verbose? "§7YES§r" : "§6§l[ §aYES §6§l]§r");
+        final BaseComponent[] setNo = TextComponent.fromLegacyText(!verbose? "§7NO§r" : "§6§l[ §aNO §6§l]§r");
+        if (verbose) {
+            result.addAll(Lists.newArrayList(setYes));
+            final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
+            final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetVerbose.ALIAS, "false"));
+            Arrays.stream(setNo)
+                    .peek(t->t.setHoverEvent(hoverEvent))
+                    .peek(t->t.setClickEvent(clickEvent))
+                    .forEach(result::add);
+        }
+        else {
+            result.addAll(Lists.newArrayList(setNo));
+            final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
+            final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetVerbose.ALIAS, "true"));
+            Arrays.stream(setYes)
+                    .peek(t->t.setHoverEvent(hoverEvent))
+                    .peek(t->t.setClickEvent(clickEvent))
+                    .forEach(result::add);
+        }
+        return result.toArray(new BaseComponent[0]);
     }
 }

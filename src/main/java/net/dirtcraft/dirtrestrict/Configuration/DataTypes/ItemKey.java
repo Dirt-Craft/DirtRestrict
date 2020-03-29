@@ -2,7 +2,6 @@ package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
-import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.minecraft.item.Item;
 import org.bukkit.Location;
@@ -12,7 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
-import scala.tools.reflect.FormatInterpolator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,17 +122,21 @@ public class ItemKey {
     }
 
     private boolean checkPerms(Player player, String itemId, String meta, String type, String world){
-        if (player.hasPermission(Permission.PERMISSION_ADMIN)) return true;
-        if (checkPerm(player, itemId, meta, type, world)) return true;
-        if (checkPerm(player, itemId, "*", type, world)) return true;
-        if (checkPerm(player, itemId, meta, "*", world)) return true;
-        if (checkPerm(player, itemId, "*", "*", world)) return true;
+        final String fullyQualified = getPermissionNode(itemId, meta, type, world);
+        if (player.hasPermission(Permission.PERMISSION_ADMIN)) {
+            return true;
+        }
+
+        if (player.hasPermission(fullyQualified)) return true;
+        if (player.hasPermission(getPermissionNode(itemId, "*", type, world))) return true;
+        if (player.hasPermission(getPermissionNode(itemId, meta, "*", world))) return true;
+        if (player.hasPermission(getPermissionNode(itemId, "*", "*", world))) return true;
         return false;
     }
 
-    private boolean checkPerm(Player player, String... check){
+    private String getPermissionNode(String... check){
         StringBuilder sb = new StringBuilder("dirtrestrict.bypass");
         Arrays.stream(check).forEach(s->sb.append(".").append(s));
-        return player.hasPermission(sb.toString());
+        return sb.toString();
     }
 }
