@@ -21,7 +21,7 @@ public class SetVerbose implements SubCommand {
 
     @Override
     public boolean onCommand(CommandSender p, Command command, String s, String[] args) {
-        if (!(p instanceof Player) || args.length < 1 || args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("false")) return false;
+        if (!(p instanceof Player) || args.length < 1 || !args[0].equalsIgnoreCase("true") && !args[0].equalsIgnoreCase("false")) return false;
         boolean set = args[0].equalsIgnoreCase("true");
         DirtRestrict.getInstance().getPreferences().setVerbose((Player) p, set);
         return true;

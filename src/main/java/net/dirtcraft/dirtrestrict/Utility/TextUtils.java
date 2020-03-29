@@ -53,7 +53,7 @@ public class TextUtils {
             arr[1] = text;
         }
         if (!restriction.hasDim(world.getUID())){
-            TextComponent text = new TextComponent(restriction.isDimsBlacklist()? " §3[§6Blacklist World§3]" : " §3[§6Whitelist World§3]");
+            TextComponent text = new TextComponent(!restriction.isDimsBlacklist()? " §3[§6Blacklist World§3]" : " §3[§6Whitelist World§3]");
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nAdds the current world to the " + (restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(AddDim.ALIAS, key, world.getName())));
             arr[2] = text;
@@ -180,7 +180,7 @@ public class TextUtils {
         final boolean isNotify = profile.getBypassSetting() == BypassSettings.NOTIFY;
         final boolean isIgnore = profile.getBypassSetting() == BypassSettings.IGNORE;
 
-        final BaseComponent[] respect = TextComponent.fromLegacyText(isRespect? "§7RESPECT§r" : "§6§l[ §aRESPECT §6§l]§r");
+        final BaseComponent[] respect = TextComponent.fromLegacyText(!isRespect? "§7RESPECT§r " : "§aRESPECT§r ");
         if (isRespect) result.addAll(Lists.newArrayList(respect));
         else {
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
@@ -191,7 +191,7 @@ public class TextUtils {
                     .forEach(result::add);
         }
 
-        final BaseComponent[] notify = TextComponent.fromLegacyText(isRespect? "§7NOTIFY§r" : "§6§l[ §aNOTIFY §6§l]§r");
+        final BaseComponent[] notify = TextComponent.fromLegacyText(!isNotify? "§7NOTIFY§r " : "§aNOTIFY§r ");
         if (isNotify) result.addAll(Lists.newArrayList(notify));
         else {
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
@@ -202,7 +202,7 @@ public class TextUtils {
                     .forEach(result::add);
         }
 
-        final BaseComponent[] ignore = TextComponent.fromLegacyText(isRespect? "§7IGNORE§r" : "§6§l[ §aIGNORE §6§l]§r");
+        final BaseComponent[] ignore = TextComponent.fromLegacyText(!isIgnore? "§7IGNORE§r " : "§aIGNORE§r ");
         if (isIgnore) result.addAll(Lists.newArrayList(ignore));
         else {
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
@@ -219,8 +219,8 @@ public class TextUtils {
         final ArrayList<BaseComponent> result = new ArrayList<>();
         result.add(new TextComponent("§6Verbose: "));
         final boolean verbose = profile.isShowPermissionNodes();
-        final BaseComponent[] setYes = TextComponent.fromLegacyText(verbose? "§7YES§r" : "§6§l[ §aYES §6§l]§r");
-        final BaseComponent[] setNo = TextComponent.fromLegacyText(!verbose? "§7NO§r" : "§6§l[ §aNO §6§l]§r");
+        final BaseComponent[] setYes = TextComponent.fromLegacyText(!verbose? "§7YES§r " : "§aYES§r ");
+        final BaseComponent[] setNo = TextComponent.fromLegacyText(verbose? "§7NO§r " : "§aNO§r ");
         if (verbose) {
             result.addAll(Lists.newArrayList(setYes));
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));

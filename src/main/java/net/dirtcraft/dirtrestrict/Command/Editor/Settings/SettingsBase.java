@@ -54,10 +54,10 @@ public class SettingsBase implements SubCommand{
 
     public boolean onCommandDefault(Player sender){
         AdminProfile profile = DirtRestrict.getInstance().getPreferences().getPreferences(sender);
-        sender.sendMessage("§4§m=====[§r §fSETTINGS §4§m]=====");
+        sender.sendMessage("§4§m=========[§r §cSETTINGS §4§m]=========");
         sender.spigot().sendMessage(TextUtils.getBypassSlider(profile));
         sender.spigot().sendMessage(TextUtils.getVerboseSlider(profile));
-        sender.sendMessage("§4§m======================");
+        sender.sendMessage("§4§m============================");
         return true;
     }
 }

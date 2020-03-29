@@ -23,11 +23,13 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
     public void onPlayerLogin(PlayerJoinEvent event){
         if (event.getPlayer() == null || !preferences.containsKey(event.getPlayer().getUniqueId()) || event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN)) return;
         preferences.remove(event.getPlayer().getUniqueId());
+        save();
     }
 
     public AdminProfile getPreferences(Player player){
         UUID uuid = player.getUniqueId();
         if (!preferences.containsKey(uuid)) preferences.put(uuid, new AdminProfile());
+        save();
         return preferences.get(uuid);
     }
 
@@ -35,6 +37,7 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
         UUID uuid = player.getUniqueId();
         if (!preferences.containsKey(uuid)) return false;
         preferences.get(uuid).setBypassSetting(setting);
+        save();
         return true;
     }
 
@@ -42,6 +45,7 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
         UUID uuid = player.getUniqueId();
         if (!preferences.containsKey(uuid)) return false;
         preferences.get(uuid).setShowPermissionNodes(setting);
+        save();
         return true;
     }
 

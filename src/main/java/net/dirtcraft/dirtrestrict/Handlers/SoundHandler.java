@@ -34,4 +34,8 @@ public class SoundHandler extends RestrictionHandler {
         if (sounds) p.playSound(p.getLocation(), Sound.ARROW_HIT, 1F, 1F);
         //if (sounds) p.playSound(p.getLocation(), Sound.valueOf("SUCCESSFUL_HIT"), 1F, 1F);
     }
+
+    public void sendAdminNotification(Player p) {
+        if (sounds) p.playSound(p.getLocation(), Sound.CREEPER_HISS, 1F, 1F);
+    }
 }

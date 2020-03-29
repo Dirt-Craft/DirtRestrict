@@ -1,5 +1,6 @@
 package net.dirtcraft.dirtrestrict.Command.Editor;
 
+import net.dirtcraft.dirtrestrict.Command.Editor.Settings.SettingsBase;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
@@ -23,6 +24,7 @@ public class EditorBase implements CommandExecutor {
         addCommand(new ToggleDimBlacklist());
         addCommand(new AddDim());
         addCommand(new RemoveDim());
+        addCommand(new SettingsBase());
     }
 
     private void addCommand(SubCommand command){

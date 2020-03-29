@@ -44,7 +44,7 @@ public class ToggleDimBlacklist implements SubCommand {
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
         Optional<Boolean> blacklist = restrictions.toggleBlacklist(bannedItem);
         if (!blacklist.isPresent()) return false;
-        final String response = "§aDims set to " + (blacklist.get()? "blacklist" : "whitelist") + " for §r\"§5" + bannedItem.getName() + "§r\"";
+        final String response = "§aDims set to " + (!blacklist.get()? "blacklist" : "whitelist") + " for §r\"§5" + bannedItem.getName() + "§r\"";
 
         sender.sendMessage(response);
         if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));

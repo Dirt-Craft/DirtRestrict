@@ -25,7 +25,7 @@ public class SetBypass implements SubCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(!(command instanceof Player) || strings.length < 1) return false;
+        if(!(commandSender instanceof Player) || strings.length < 1) return false;
         Optional<BypassSettings> setting = CommandUtils.parseEnum(BypassSettings.class, strings[0]);
         if (!setting.isPresent()) return false;
         else DirtRestrict.getInstance().getPreferences().setBypassSettings((Player)commandSender, setting.get());
