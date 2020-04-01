@@ -1,5 +1,7 @@
 package net.dirtcraft.dirtrestrict.Configuration.DataTypes;
 
+import net.dirtcraft.dirtrestrict.DirtRestrict;
+import net.dirtcraft.dirtrestrict.Utility.RecipeHelper;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.bukkit.World;
@@ -89,8 +91,16 @@ public class Restriction {
         return recipeDisabled;
     }
 
-    public boolean toggleRecipeDisabled(){
+    public boolean toggleRecipeDisabled(ItemKey itemKey){
         recipeDisabled = !recipeDisabled;
+        RecipeHelper recipeHelper = DirtRestrict.getInstance().getRecipeHelper();
+        if (recipeDisabled){
+            recipeHelper.removeCraftingRecipe(itemKey);
+            recipeHelper.removeSmeltingRecipe(itemKey);
+        } else {
+            recipeHelper.restoreCraftingRecipe(itemKey);
+            recipeHelper.restoreSmeltingRecipe(itemKey);
+        }
         return recipeDisabled;
     }
 

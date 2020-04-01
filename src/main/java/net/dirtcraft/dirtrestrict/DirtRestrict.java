@@ -68,10 +68,6 @@ public final class DirtRestrict extends JavaPlugin {
         return INSTANCE;
     }
 
-    private void registerHandler(Listener listener){
-        Bukkit.getPluginManager().registerEvents(listener,this);
-    }
-
     public SoundHandler getSoundHandler() {
         return soundHandler;
     }

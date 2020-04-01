@@ -47,7 +47,7 @@ public class ToggleHidden implements SubCommand {
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
         Optional<Boolean> hidden = restrictions.toggleHidden(bannedItem);
         if (!hidden.isPresent()) return false;
-        final String response = hidden.get()? "§cblacklist" : "§awhitelist" + " §r\"§5" + bannedItem.getName() + "§r\"";
+        final String response = (hidden.get()? "§cHidden" : "§aRevealed") + " the entry for §r\"§5" + bannedItem.getName() + "§r\"'.";
 
         sender.sendMessage(response);
         if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));

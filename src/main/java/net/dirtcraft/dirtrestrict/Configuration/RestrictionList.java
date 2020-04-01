@@ -71,14 +71,14 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
 
     public Optional<Boolean> toggleHidden(ItemKey key){
         if (!config.containsKey(key)) return Optional.empty();
-        Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());
+        Optional<Boolean> res = Optional.of(config.get(key).toggleHidden());
         save();
         return res;
     }
 
     public Optional<Boolean> toggleRecipeDisabled(ItemKey key){
         if (!config.containsKey(key)) return Optional.empty();
-        Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());
+        Optional<Boolean> res = Optional.of(config.get(key).toggleRecipeDisabled(key));
         save();
         return res;
     }

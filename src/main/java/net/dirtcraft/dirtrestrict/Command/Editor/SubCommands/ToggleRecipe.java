@@ -47,7 +47,7 @@ public class ToggleRecipe implements SubCommand {
         final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
         Optional<Boolean> recipeDisabled = restrictions.toggleRecipeDisabled(bannedItem);
         if (!recipeDisabled.isPresent()) return false;
-        final String response = recipeDisabled.get()? "§cEnabled" : "§aDisabled" + " recipes for §r\"§5" + bannedItem.getName() + "§r\"";
+        final String response = (recipeDisabled.get()? "§cDisabled" : "§aEnabled") + " recipes for §r\"§5" + bannedItem.getName() + "§r\"";
 
         sender.sendMessage(response);
         if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
