@@ -1,6 +1,6 @@
 package net.dirtcraft.dirtrestrict.Command.Editor;
 
-import net.dirtcraft.dirtrestrict.Command.Editor.Settings.SettingsBase;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.SettingsBase;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
@@ -12,22 +12,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditorBase implements CommandExecutor {
-    private final Map<String, SubCommand> subCommandMap = new HashMap<>();
+    public static final String ALIAS = "dirtrestrict";
+    public static final Map<String, SubCommand> subCommandMap = new HashMap<>();
 
-    {
+    static {
         addCommand(new ToggleRestriction());
         addCommand(new RemoveRestriction());
-        addCommand(new SetReason());
         addCommand(new AddRestriction());
         addCommand(new EditRestriction());
-        addCommand(new SetUniversal());
         addCommand(new ToggleDimBlacklist());
+        addCommand(new ToggleHidden());
+        addCommand(new ToggleRecipe());
         addCommand(new AddDim());
         addCommand(new RemoveDim());
+        addCommand(new SetReason());
+        addCommand(new SetUniversal());
         addCommand(new SettingsBase());
     }
 
-    private void addCommand(SubCommand command){
+    private static void addCommand(SubCommand command){
         subCommandMap.put(command.getName().toLowerCase(), command);
     }
 

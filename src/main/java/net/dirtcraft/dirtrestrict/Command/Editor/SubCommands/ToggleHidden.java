@@ -19,9 +19,8 @@ import java.util.stream.Collectors;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
 
-public class SetReason implements SubCommand {
-
-    public static final String ALIAS = "Reason";
+public class ToggleHidden implements SubCommand {
+    public final static String ALIAS = "ToggleHidden";
     @Override
     public String getName() {
         return ALIAS;
@@ -29,8 +28,33 @@ public class SetReason implements SubCommand {
 
     @Override
     public String getPermission() {
-        return Permission.COMMAND_MODIFY_REASON;
+        return Permission.COMMAND_MODIFY_DIMS;
     }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        final RestrictionList restrictions = DirtRestrict.getInstance().getRestrictions();
+        if (args.length < 1) return false;
+        final Optional<Material> material = parseMaterial(args[0]);
+        final Optional<Byte> b;
+        if (!material.isPresent()) {
+            return false;
+        } else if (args.length > 1) {
+            b = parseByte(args[1]);
+        } else {
+            b = Optional.empty();
+        }
+        final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
+        Optional<Boolean> hidden = restrictions.toggleHidden(bannedItem);
+        if (!hidden.isPresent()) return false;
+        final String response = hidden.get()? "§cblacklist" : "§awhitelist" + " §r\"§5" + bannedItem.getName() + "§r\"";
+
+        sender.sendMessage(response);
+        if (sender instanceof Player) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
+
+        return true;
+    }
+
 
     @Override
     public List<String> getTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -51,30 +75,5 @@ public class SetReason implements SubCommand {
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        final RestrictionList restrictions = DirtRestrict.getInstance().getRestrictions();
-        final int i;
-        if (args.length < 1) return false;
-        final Optional<Material> material = parseMaterial(args[0]);
-        final Optional<Byte> b = parseByte(args[1]);
-        if (material.isPresent() && args.length > 2 && (b.isPresent() || args[1].equalsIgnoreCase("-"))) i = 2;
-        else if (material.isPresent()) i = 1;
-        else return false;
-
-        final String[] remaining = new String[args.length - i];
-        System.arraycopy(args, i, remaining, 0, args.length - i );
-        final String reason = String.join(" ", remaining);
-        final ItemKey bannedItem = new ItemKey(material.get(), b.orElse(null));
-        final boolean success = restrictions.updateBanReason(bannedItem, reason);
-        final String response = "§aBan reason of §r\"§5" + bannedItem.getName() + "§r\"§a set to §r\"§5" + reason + "§r\"";
-
-        if (success) sender.sendMessage(response);
-        else sender.sendMessage("\"§5" + bannedItem.getName() + "§r\"§c does not exist on the ban list.");
-        if (sender instanceof Player && success) ((Player)sender).spigot().sendMessage(TextUtils.getLinks(bannedItem));
-
-        return success;
     }
 }

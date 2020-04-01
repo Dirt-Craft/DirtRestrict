@@ -1,5 +1,8 @@
-package net.dirtcraft.dirtrestrict.Command.Editor.Settings;
+package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands;
 
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings.SetBypass;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings.SetSound;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings.SetVerbose;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.AdminProfile;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
@@ -9,7 +12,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SettingsBase implements SubCommand{
@@ -50,6 +55,19 @@ public class SettingsBase implements SubCommand{
     @Override
     public String getPermission() {
         return Permission.PERMISSION_ADMIN;
+    }
+
+    @Override
+    public List<String> getTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length == 0) {
+            return new ArrayList<>(subCommandMap.keySet());
+        } else if (subCommandMap.containsKey(strings[0].toLowerCase())) {
+            String[] args = new String[strings.length-1];
+            System.arraycopy(strings, 1, args, 0, args.length);
+            return subCommandMap.get(strings[1].toLowerCase()).getTabComplete(commandSender, command, s, args);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public boolean onCommandDefault(Player sender){

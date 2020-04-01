@@ -18,9 +18,10 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
         super(plugin, "Restrictions", new TypeToken<Map<ItemKey, Restriction>>(){}, new HashMap<>());
     }
 
-    public boolean addBan(ItemKey item){
+    public boolean addBan(ItemKey item, String reason){
         if (config.containsKey(item)) return false;
-        config.put(item, new Restriction());
+        if (reason != null) config.put(item, new Restriction(reason));
+        else config.put(item, new Restriction());
         save();
         return true;
     }
@@ -62,6 +63,20 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
     }
 
     public Optional<Boolean> toggleBlacklist(ItemKey key){
+        if (!config.containsKey(key)) return Optional.empty();
+        Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());
+        save();
+        return res;
+    }
+
+    public Optional<Boolean> toggleHidden(ItemKey key){
+        if (!config.containsKey(key)) return Optional.empty();
+        Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());
+        save();
+        return res;
+    }
+
+    public Optional<Boolean> toggleRecipeDisabled(ItemKey key){
         if (!config.containsKey(key)) return Optional.empty();
         Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());
         save();

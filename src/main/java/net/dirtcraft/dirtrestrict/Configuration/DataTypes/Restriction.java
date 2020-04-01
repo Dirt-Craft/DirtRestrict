@@ -12,11 +12,13 @@ import java.util.UUID;
 
 @ConfigSerializable
 public class Restriction {
-    @Setting private boolean hidden;
-    @Setting private boolean dimBlacklist;
-    @Setting private String reason;
     @Setting private EnumSet<RestrictionTypes> restrictions;
     @Setting private HashSet<UUID> dims;
+    @Setting private String reason;
+    @Setting private boolean dimBlacklist;
+    @Setting private boolean hidden;
+    @Setting private boolean recipeDisabled;
+    @Setting private boolean worldScan;
 
     public Restriction(){
         this.hidden = false;
@@ -64,13 +66,13 @@ public class Restriction {
     }
 
     public boolean addDim(World world){
-        if (world == null || dims.contains(world)) return false;
+        if (world == null || dims.contains(world.getUID())) return false;
         dims.add(world.getUID());
         return true;
     }
 
     public boolean removeDim(World world){
-        if (world == null || dims.contains(world)) return false;
+        if (world == null || dims.contains(world.getUID())) return false;
         dims.remove(world.getUID());
         return true;
     }
@@ -81,5 +83,32 @@ public class Restriction {
 
     public boolean hasDim(UUID uuid){
         return dims.contains(uuid);
+    }
+
+    public boolean isRecipeDisabled() {
+        return recipeDisabled;
+    }
+
+    public boolean toggleRecipeDisabled(){
+        recipeDisabled = !recipeDisabled;
+        return recipeDisabled;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public boolean toggleHidden(){
+        hidden = !hidden;
+        return hidden;
+    }
+
+    public boolean isWorldScan() {
+        return worldScan;
+    }
+
+    public boolean toggleWorldScan(){
+        worldScan = !worldScan;
+        return worldScan;
     }
 }

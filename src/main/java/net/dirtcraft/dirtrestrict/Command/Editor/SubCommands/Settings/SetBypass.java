@@ -1,4 +1,4 @@
-package net.dirtcraft.dirtrestrict.Command.Editor.Settings;
+package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings;
 
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.BypassSettings;
@@ -9,7 +9,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SetBypass implements SubCommand {
     public static final String ALIAS = "SetBypass";
@@ -21,6 +24,12 @@ public class SetBypass implements SubCommand {
     @Override
     public String getPermission() {
         return Permission.PERMISSION_ADMIN;
+    }
+
+    @Override
+    public List<String> getTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length > 0) return null;
+        return Arrays.stream(BypassSettings.values()).map(Enum::toString).collect(Collectors.toList());
     }
 
     @Override

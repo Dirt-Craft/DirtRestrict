@@ -24,7 +24,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-import static net.dirtcraft.dirtrestrict.Configuration.Permission.*;
+import static net.dirtcraft.dirtrestrict.Configuration.Permission.BYPASS_BASE;
+import static net.dirtcraft.dirtrestrict.Configuration.Permission.PERMISSION_ADMIN;
 
 public class ItemKey {
     private static final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
@@ -71,8 +72,12 @@ public class ItemKey {
         return new net.minecraft.item.ItemStack(Item.getItemById(item), 0, data).getDisplayName();
     }
 
-    public String getId(){
-        return data == null ? String.valueOf(item) : item + ":" + data;
+    public int getId(){
+        return item;
+    }
+
+    public String getMeta(){
+        return data == null? "*" : data.toString();
     }
 
     public Item getItem(){

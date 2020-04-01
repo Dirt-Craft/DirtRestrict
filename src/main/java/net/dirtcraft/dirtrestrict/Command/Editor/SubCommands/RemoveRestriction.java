@@ -11,7 +11,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseByte;
 import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseMaterial;
@@ -27,6 +30,27 @@ public class RemoveRestriction implements SubCommand {
     @Override
     public String getPermission() {
         return Permission.COMMAND_MODIFY_REMOVE;
+    }
+
+    @Override
+    public List<String> getTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        if(strings.length == 0) {
+            return DirtRestrict.getInstance().getRestrictions().getRestrictions().keySet()
+                    .stream()
+                    .map(ItemKey::getId)
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+        } else if (strings.length == 1){
+            Optional<Material> optMaterial = parseMaterial(strings[0]);
+            if (!optMaterial.isPresent()) return new ArrayList<>();
+            int item = optMaterial.get().getId();
+            return DirtRestrict.getInstance().getRestrictions().getRestrictions().keySet()
+                    .stream()
+                    .filter(key->key.item == item)
+                    .map(ItemKey::getMeta)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override

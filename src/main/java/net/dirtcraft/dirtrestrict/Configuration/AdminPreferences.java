@@ -19,7 +19,6 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
     @SuppressWarnings("UnstableApiUsage")
     public AdminPreferences(DirtRestrict plugin) {
         super(plugin, "Preferences", new TypeToken<HashMap<UUID, AdminProfile>>(){}, new HashMap<>());
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
