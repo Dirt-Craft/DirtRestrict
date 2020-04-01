@@ -47,6 +47,10 @@ public class Restriction {
         else return !dims.contains(world.getUID());
     }
 
+    public boolean isRestricted(RestrictionTypes type) {
+        return (!restrictions.contains(type));
+    }
+
     public boolean toggleRestrictions(RestrictionTypes type){
         final boolean value = restrictions.contains(type);
         if (value) restrictions.remove(type);

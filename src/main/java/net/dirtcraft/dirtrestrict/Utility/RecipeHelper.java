@@ -2,13 +2,11 @@ package net.dirtcraft.dirtrestrict.Utility;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import scala.collection.mutable.MultiMap;
 
 import java.util.List;
 import java.util.Map;
@@ -40,8 +38,8 @@ public class RecipeHelper {
         List<Map.Entry<ItemStack, ItemStack>> entries = smeltingList.entrySet().stream()
                 .filter(s->s.getValue() != null && s.getValue().getItem() == key.getItem())
                 .filter(s->key.data == null || s.getValue().getMetadata() == key.data)
-                .peek(k->smeltingList.remove(k.getKey()))
                 .collect(Collectors.toList());
+        entries.forEach(es->smeltingList.remove(es.getKey()));
         removedRecipesF.putAll(key, entries);
     }
 
