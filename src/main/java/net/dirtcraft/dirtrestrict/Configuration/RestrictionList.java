@@ -62,6 +62,11 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
         else return Optional.of(config.get(key).isDimsBlacklist());
     }
 
+    public boolean isCraftDisabled(ItemKey key){
+        if (!config.containsKey(key)) return false;
+        else return config.get(key).isRecipeDisabled();
+    }
+
     public Optional<Boolean> toggleBlacklist(ItemKey key){
         if (!config.containsKey(key)) return Optional.empty();
         Optional<Boolean> res = Optional.of(config.get(key).toggleBlacklist());

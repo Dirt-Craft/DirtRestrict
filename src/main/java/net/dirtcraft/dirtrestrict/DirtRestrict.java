@@ -4,6 +4,7 @@ import net.dirtcraft.dirtrestrict.Command.BannedItemCommand;
 import net.dirtcraft.dirtrestrict.Command.Editor.EditorBase;
 import net.dirtcraft.dirtrestrict.Command.Editor.EditorTabCompleter;
 import net.dirtcraft.dirtrestrict.Configuration.AdminPreferences;
+import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.Handlers.RestrictionHandler;
 import net.dirtcraft.dirtrestrict.Handlers.Restrictions.*;
@@ -50,6 +51,12 @@ public final class DirtRestrict extends JavaPlugin {
                 preferences
         );
         handlers.forEach(h->manager.registerEvents(h, this));
+        restrictions.getRestrictions()
+                .keySet()
+                .stream()
+                .filter(restrictions::isCraftDisabled)
+                .peek(recipeHelper::removeCraftingRecipe)
+                .forEach(recipeHelper::removeSmeltingRecipe);
         this.getCommand(BannedItemCommand.ALIAS).setExecutor(new BannedItemCommand());
         this.getCommand(EditorBase.ALIAS).setExecutor(new EditorBase());
         this.getCommand(EditorBase.ALIAS).setTabCompleter(new EditorTabCompleter());
