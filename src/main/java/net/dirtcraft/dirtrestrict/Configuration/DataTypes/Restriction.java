@@ -48,7 +48,7 @@ public class Restriction {
     }
 
     public boolean isRestricted(RestrictionTypes type) {
-        return (!restrictions.contains(type));
+        return (restrictions.contains(type));
     }
 
     public boolean toggleRestrictions(RestrictionTypes type){
