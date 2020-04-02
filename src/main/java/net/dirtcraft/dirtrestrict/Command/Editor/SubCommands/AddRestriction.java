@@ -6,13 +6,11 @@ import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.TextUtils;
-import net.minecraft.item.Item;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import scala.tools.cmd.gen.AnyValReps;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -24,8 +24,9 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.dirtcraft.dirtrestrict.Utility.TextUtils.*;
-import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.*;
+import static net.dirtcraft.dirtrestrict.Utility.CommandUtils.parseInt;
+import static net.dirtcraft.dirtrestrict.Utility.TextUtils.getCommand;
+import static net.dirtcraft.dirtrestrict.Utility.TextUtils.getMono;
 
 public class BannedItemCommand implements CommandExecutor {
     public static final String ALIAS = "banneditems";
@@ -41,7 +42,7 @@ public class BannedItemCommand implements CommandExecutor {
     private void runCommandAsync(CommandSender sender, int pg){
         try {
             if (!(sender instanceof Player)) return;
-            final int ENTRIES_PER_PAGE = 16;
+            final int ENTRIES_PER_PAGE = 12;
             final Player player = (Player) sender;
             final boolean isStaff = player.hasPermission(Permission.PERMISSION_ADMIN);
             final Map<ItemKey, Restriction> restrictionMap = DirtRestrict.getInstance().getRestrictions().getRestrictions();

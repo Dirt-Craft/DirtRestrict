@@ -2,10 +2,9 @@ package net.dirtcraft.dirtrestrict.Utility;
 
 import com.google.common.collect.Lists;
 import joptsimple.internal.Strings;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings.SetBypass;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings.SetVerbose;
-import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.SettingsBase;
-import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.*;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

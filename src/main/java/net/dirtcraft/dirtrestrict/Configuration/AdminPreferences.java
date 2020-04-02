@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.AdminProfile;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.BypassSettings;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
