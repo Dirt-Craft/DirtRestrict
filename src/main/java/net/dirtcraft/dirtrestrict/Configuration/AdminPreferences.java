@@ -42,6 +42,14 @@ public class AdminPreferences extends ConfigurationBase<HashMap<UUID, AdminProfi
         return true;
     }
 
+    public boolean setShowHidden(Player player, boolean setting){
+        UUID uuid = player.getUniqueId();
+        if (!config.containsKey(uuid)) return false;
+        config.get(uuid).setShowHidden(setting);
+        save();
+        return true;
+    }
+
     public boolean setVerbose(Player player, boolean setting){
         UUID uuid = player.getUniqueId();
         if (!config.containsKey(uuid)) return false;

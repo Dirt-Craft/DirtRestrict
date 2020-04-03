@@ -45,6 +45,7 @@ public class BannedItemCommand implements CommandExecutor {
             final int ENTRIES_PER_PAGE = 12;
             final Player player = (Player) sender;
             final boolean isStaff = player.hasPermission(Permission.PERMISSION_ADMIN);
+            final boolean showAll = isStaff && DirtRestrict.getInstance().getPreferences().getPreferences(player).isShowHidden();
             final Map<ItemKey, Restriction> restrictionMap = DirtRestrict.getInstance().getRestrictions().getRestrictions();
             final Flipper<Character> mainColor = new Flipper<>('6', 'e');
             final Flipper<Character> trimColor = new Flipper<>('3', 'b');
@@ -54,7 +55,7 @@ public class BannedItemCommand implements CommandExecutor {
             sender.sendMessage("§4§m====[§r §cDIRT§fCRAFT §4§m]=[§r §5BANNED ITEMS §4§m]====");
             restrictionMap.forEach(((itemKey, restriction) -> {
                 final int page;
-                if (restriction.isHidden() && !isStaff || (page = i.getAndIncrement() / ENTRIES_PER_PAGE) != pg) return;
+                if (restriction.isHidden() && !showAll || (page = i.getAndIncrement() / ENTRIES_PER_PAGE) != pg) return;
                 BaseComponent[] text = getRestrictionText(itemKey, restriction, mainColor.get(), trimColor.get(), lastColor.get(), isStaff);
                 entries.put(page, text);
             }));

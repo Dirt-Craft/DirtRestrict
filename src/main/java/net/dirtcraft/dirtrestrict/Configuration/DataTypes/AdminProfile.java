@@ -10,6 +10,7 @@ public class AdminProfile {
     @Setting private BypassSettings bypassSetting = BypassSettings.NOTIFY;
     @Setting private boolean ShowPermissionNodes = false;
     @Setting private Sound sound = Sound.ZOMBIE_METAL;
+    @Setting private boolean showHidden = false;
 
     public boolean isShowPermissionNodes() {
         return ShowPermissionNodes;
@@ -33,5 +34,13 @@ public class AdminProfile {
 
     public void setSound(Sound sound) {
         this.sound = sound;
+    }
+
+    public boolean isShowHidden() {
+        return showHidden;
+    }
+
+    public void setShowHidden(boolean showHidden) {
+        this.showHidden = showHidden;
     }
 }
