@@ -7,6 +7,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class CommandUtils {
     public static Optional<Material> parseMaterial(String s){
@@ -40,6 +41,9 @@ public class CommandUtils {
     public static Optional<World> parseWorld(String s){
         Server server = Bukkit.getServer();
         try {
+            if ((s.length() == 32 || s.length() == 36) && s.matches("(\\d{8}-?\\d{4}-?\\d{4}-?\\d{4}-?\\d{12})")){
+                return Optional.ofNullable(server.getWorld(UUID.fromString(s)));
+            }
             return Optional.ofNullable(server.getWorld(s));
         } catch (Exception ignored){
             return Optional.empty();

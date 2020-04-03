@@ -1,9 +1,12 @@
 package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings;
 
+import net.dirtcraft.dirtrestrict.Command.Editor.EditorBase;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.SettingsBase;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.CommandUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static net.dirtcraft.dirtrestrict.Utility.TextUtils.getCommand;
 
 public class SetSound implements SubCommand {
     public static final String ALIAS = "SetSound";
@@ -38,6 +43,8 @@ public class SetSound implements SubCommand {
         Optional<Sound> setting = CommandUtils.parseEnum(Sound.class, strings[0]);
         if (!setting.isPresent()) return false;
         else DirtRestrict.getInstance().getPreferences().setSound((Player)commandSender, setting.get());
+        commandSender.sendMessage("§6Set personal notify sound to §2" + setting.get().name());
+        Bukkit.getServer().dispatchCommand(commandSender, EditorBase.ALIAS + " " + SettingsBase.ALIAS);
         return true;
     }
 }

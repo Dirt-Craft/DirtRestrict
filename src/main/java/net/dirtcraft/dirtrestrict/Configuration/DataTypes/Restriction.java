@@ -78,7 +78,7 @@ public class Restriction {
     }
 
     public boolean removeDim(World world){
-        if (world == null || dims.contains(world.getUID())) return false;
+        if (world == null || !dims.contains(world.getUID())) return false;
         dims.remove(world.getUID());
         return true;
     }

@@ -14,10 +14,12 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.xml.soap.Text;
 import java.util.*;
 
 import static net.dirtcraft.dirtrestrict.Utility.TextUtils.*;
@@ -70,7 +72,7 @@ public class SettingsBase implements SubCommand{
         } else if (subCommandMap.containsKey(strings[0].toLowerCase())) {
             String[] args = new String[strings.length-1];
             System.arraycopy(strings, 1, args, 0, args.length);
-            return subCommandMap.get(strings[1].toLowerCase()).getTabComplete(commandSender, command, s, args);
+            return subCommandMap.get(strings[0].toLowerCase()).getTabComplete(commandSender, command, s, args);
         } else {
             return new ArrayList<>();
         }
@@ -80,6 +82,7 @@ public class SettingsBase implements SubCommand{
         AdminProfile profile = DirtRestrict.getInstance().getPreferences().getPreferences(sender);
         sender.sendMessage("§4§m=========[§r §cSETTINGS §4§m]=========");
         sender.spigot().sendMessage(getBypassSlider(profile));
+        if (profile.getBypassSetting() == BypassSettings.NOTIFY) sender.spigot().sendMessage(getSound(profile));
         sender.spigot().sendMessage(getVerboseSlider(profile));
         sender.spigot().sendMessage(getHiddenSlider(profile));
         sender.sendMessage("§4§m============================");
@@ -135,50 +138,59 @@ public class SettingsBase implements SubCommand{
         final BaseComponent[] setYes = TextComponent.fromLegacyText(!verbose? "§7YES§r " : "§aYES§r ");
         final BaseComponent[] setNo = TextComponent.fromLegacyText(verbose? "§7NO§r " : "§aNO§r ");
         if (verbose) {
-            result.addAll(Lists.newArrayList(setYes));
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
             final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetVerbose.ALIAS, "false"));
+            result.addAll(Lists.newArrayList(setYes));
             Arrays.stream(setNo)
                     .peek(t->t.setHoverEvent(hoverEvent))
                     .peek(t->t.setClickEvent(clickEvent))
                     .forEach(result::add);
         }
         else {
-            result.addAll(Lists.newArrayList(setNo));
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
             final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetVerbose.ALIAS, "true"));
             Arrays.stream(setYes)
                     .peek(t->t.setHoverEvent(hoverEvent))
                     .peek(t->t.setClickEvent(clickEvent))
                     .forEach(result::add);
+            result.addAll(Lists.newArrayList(setNo));
         }
         return result.toArray(new BaseComponent[0]);
     }
 
     private static BaseComponent[] getHiddenSlider(AdminProfile profile){
         final ArrayList<BaseComponent> result = new ArrayList<>();
-        result.add(new TextComponent("§Show All: "));
-        final boolean verbose = profile.isShowPermissionNodes();
-        final BaseComponent[] setYes = TextComponent.fromLegacyText(!verbose? "§7YES§r " : "§aYES§r ");
-        final BaseComponent[] setNo = TextComponent.fromLegacyText(verbose? "§7NO§r " : "§aNO§r ");
-        if (verbose) {
-            result.addAll(Lists.newArrayList(setYes));
+        result.add(new TextComponent("§6Show All: "));
+        final boolean showHidden = profile.isShowHidden();
+        final BaseComponent[] setYes = TextComponent.fromLegacyText(!showHidden? "§7YES§r " : "§aYES§r ");
+        final BaseComponent[] setNo = TextComponent.fromLegacyText(showHidden? "§7NO§r " : "§aNO§r ");
+        if (showHidden) {
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
             final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetHidden.ALIAS, "false"));
+            result.addAll(Lists.newArrayList(setYes));
             Arrays.stream(setNo)
                     .peek(t->t.setHoverEvent(hoverEvent))
                     .peek(t->t.setClickEvent(clickEvent))
                     .forEach(result::add);
         }
         else {
-            result.addAll(Lists.newArrayList(setNo));
             final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick toggle setting."));
             final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(SettingsBase.ALIAS, SetHidden.ALIAS, "true"));
             Arrays.stream(setYes)
                     .peek(t->t.setHoverEvent(hoverEvent))
                     .peek(t->t.setClickEvent(clickEvent))
                     .forEach(result::add);
+            result.addAll(Lists.newArrayList(setNo));
         }
         return result.toArray(new BaseComponent[0]);
+    }
+
+    private static TextComponent getSound(AdminProfile profile) {
+        final TextComponent textComponent = new TextComponent("§6Notify Sound: §5" + profile.getSound().name());
+        final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick change setting."));
+        final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, getCommand(SettingsBase.ALIAS, SetSound.ALIAS));
+        textComponent.setHoverEvent(hoverEvent);
+        textComponent.setClickEvent(clickEvent);
+        return textComponent;
     }
 }

@@ -1,10 +1,13 @@
 package net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.Settings;
 
+import net.dirtcraft.dirtrestrict.Command.Editor.EditorBase;
+import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.SettingsBase;
 import net.dirtcraft.dirtrestrict.Command.SubCommand;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.BypassSettings;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import net.dirtcraft.dirtrestrict.Utility.CommandUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static net.dirtcraft.dirtrestrict.Utility.TextUtils.*;
 
 public class SetBypass implements SubCommand {
     public static final String ALIAS = "SetBypass";
@@ -38,6 +43,8 @@ public class SetBypass implements SubCommand {
         Optional<BypassSettings> setting = CommandUtils.parseEnum(BypassSettings.class, strings[0]);
         if (!setting.isPresent()) return false;
         else DirtRestrict.getInstance().getPreferences().setBypassSettings((Player)commandSender, setting.get());
+        commandSender.sendMessage("§6Set personal bypass setting to " + setting.get().getColorName());
+        Bukkit.getServer().dispatchCommand(commandSender, EditorBase.ALIAS + " " + SettingsBase.ALIAS);
         return true;
     }
 }

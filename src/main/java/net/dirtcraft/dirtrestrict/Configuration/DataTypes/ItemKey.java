@@ -27,7 +27,7 @@ import java.util.Optional;
 import static net.dirtcraft.dirtrestrict.Configuration.Permission.BYPASS_BASE;
 import static net.dirtcraft.dirtrestrict.Configuration.Permission.PERMISSION_ADMIN;
 
-public class ItemKey {
+public class ItemKey implements Comparable<ItemKey> {
     private static final DirtRestrict dirtRestrict = DirtRestrict.getInstance();
     public final int item;
     public final Byte data;
@@ -167,5 +167,19 @@ public class ItemKey {
         StringBuilder sb = new StringBuilder(BYPASS_BASE);
         Arrays.stream(check).forEach(s->sb.append(".").append(s));
         return new Permission(sb.toString(), PermissionDefault.FALSE);
+    }
+
+    @Override
+    public int compareTo(ItemKey o) {
+        if (o.item < item) return 1;
+        else if (o.item > item) return -1;
+        if (data == null || o.data == null){
+            if (data == null && o.data == null) return 0;
+            if (data == null) return 1;
+            return -1;
+        }
+        if (o.data < data) return 1;
+        else if (o.data > data) return -1;
+        return 0;
     }
 }

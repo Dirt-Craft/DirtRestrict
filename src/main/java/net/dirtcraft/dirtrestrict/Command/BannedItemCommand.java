@@ -1,6 +1,7 @@
 package net.dirtcraft.dirtrestrict.Command;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Comparators;
 import com.google.common.collect.Multimap;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.EditRestriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
@@ -18,9 +19,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,13 +49,18 @@ public class BannedItemCommand implements CommandExecutor {
             final Flipper<Character> mainColor = new Flipper<>('6', 'e');
             final Flipper<Character> trimColor = new Flipper<>('3', 'b');
             final Flipper<Character> lastColor = new Flipper<>('8', '7');
+            final Flipper<Character> hideColor = new Flipper<>('5', 'd');
+            SortedSet<ItemKey> list = new TreeSet<>(restrictionMap.keySet());
             final Multimap<Integer, BaseComponent[]> entries = ArrayListMultimap.create();
             AtomicInteger i = new AtomicInteger();
             sender.sendMessage("§4§m====[§r §cDIRT§fCRAFT §4§m]=[§r §5BANNED ITEMS §4§m]====");
-            restrictionMap.forEach(((itemKey, restriction) -> {
+            list.forEach(((itemKey) -> {
+                final Restriction restriction = restrictionMap.get(itemKey);
                 final int page;
                 if (restriction.isHidden() && !showAll || (page = i.getAndIncrement() / ENTRIES_PER_PAGE) != pg) return;
-                BaseComponent[] text = getRestrictionText(itemKey, restriction, mainColor.get(), trimColor.get(), lastColor.get(), isStaff);
+                final char hide = hideColor.get();
+                final char show = mainColor.get();
+                BaseComponent[] text = getRestrictionText(itemKey, restriction, restriction.isHidden()? hide : show, trimColor.get(), lastColor.get(), isStaff);
                 entries.put(page, text);
             }));
             final int pageMax = ((i.decrementAndGet()) / ENTRIES_PER_PAGE) + 1;

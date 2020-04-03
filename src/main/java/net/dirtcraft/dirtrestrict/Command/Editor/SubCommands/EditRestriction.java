@@ -116,34 +116,36 @@ public class EditRestriction implements SubCommand {
     }
 
     private static BaseComponent[] getWorlds(Collection<UUID> set, ItemKey key, Restriction restriction, boolean blackList, World world) {
-        BaseComponent[] arr = new BaseComponent[3];
+        BaseComponent[] arr = new BaseComponent[3 + set.size() * 2];
         Server server = Bukkit.getServer();
         TextComponent label = new TextComponent(blackList ? "§6World §aWhitelist§6: §c" : "§6World §cBlacklist§6: §a");
         label.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nSet the dim list to a " + (restriction.isDimsBlacklist() ? "blacklist" : "whitelist"))));
         label.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(ToggleDimBlacklist.ALIAS, key)));
         arr[0] = label;
         if (!restriction.hasDim(world.getUID())){
-            TextComponent text = new TextComponent(" §3[§6Add World§3]");
+            TextComponent text = new TextComponent("§3[§2+§3]");
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nAdds the current world to the " + (!restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(AddDim.ALIAS, key, world.getName())));
-            arr[2] = text;
+            arr[arr.length-1] = text;
         } else {
-            TextComponent text = new TextComponent(" §3[§6Remove World§3]");
+            TextComponent text = new TextComponent("§3[§4-§3]");
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nRemoves the current world from the " + (!restriction.isDimsBlacklist()? "blacklist" : "whitelist"))));
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, getCommand(RemoveDim.ALIAS, key, world.getName())));
-            arr[2] = text;
+            arr[arr.length-1] = text;
         }
 
-        final TextComponent worlds = new TextComponent();
         final Iterator<UUID> uuidIterator = set.iterator();
-        if (uuidIterator.hasNext()) worlds.addExtra("[");
-        else worlds.addExtra("N/A");
-        while (uuidIterator.hasNext()) {
-            worlds.addExtra(formatWorld(server.getWorld(uuidIterator.next()), key, blackList ? 'c' : 'a'));
-            if (uuidIterator.hasNext()) worlds.addExtra(", ");
-            else worlds.addExtra("]");
+        if (uuidIterator.hasNext()) arr[1] = new TextComponent("[");
+        else {
+            arr[1] = new TextComponent("N/A ");
         }
-        arr[1] = worlds;
+        int i = 1;
+        while (uuidIterator.hasNext()) {
+            BaseComponent worldBase = formatWorld(server.getWorld(uuidIterator.next()), key, blackList ? 'c' : 'a');
+            BaseComponent joiner = new TextComponent(uuidIterator.hasNext()? ", " : "] ");
+            arr[++i] = new TextComponent(worldBase);
+            arr[++i] = new TextComponent(joiner);
+        }
         return arr;
     }
 
