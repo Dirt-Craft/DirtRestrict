@@ -13,22 +13,23 @@ public abstract class RestrictionHandler implements Listener {
     protected final SoundHandler soundHandler = dirtRestrict.getSoundHandler();
 
     protected void printMessage(Player p, RestrictionTypes type, ItemKey itemKey, String reason) {
-        p.sendMessage(getMessage(type, itemKey, reason));
+        String reasonText = reason == null || reason.equalsIgnoreCase("")? "§c!" : ("§c due to \"§4" + reason + "§c\"");
+        p.sendMessage(getMessage(type, itemKey) + reasonText);
     }
 
-    private String getMessage(RestrictionTypes type, ItemKey itemKey, String reason){
+    private String getMessage(RestrictionTypes type, ItemKey itemKey){
         switch (type){
-            case OWN: return "You are not allowed to own this item!";
-            case USE: return "You are not allowed to use this item!";
-            case DROP: return "You are not allowed to drop this item!";
-            case BREAK: return "You are not allowed to break this item!";
-            case PLACE: return "You are not allowed to place this item!";
-            case PICKUP: return "You are not allowed to pick up this item!";
-            case BREWING: return "You are not allowed to brew this potion!";
-            case CRAFTING: return "You are not allowed to craft this item!";
-            case SMELTING: return  "You are not allowed to smelt this item!";
-            case CREATIVE: return "This item cannot be used in creative!";
-            default: return "This is not allowed.";
+            case OWN: return "§cYou are not allowed to own §6" + itemKey.getName();
+            case USE: return "§cYou are not allowed to use §6" + itemKey.getName();
+            case DROP: return "§cYou are not allowed to drop §6" + itemKey.getName();
+            case BREAK: return "§cYou are not allowed to break §6" + itemKey.getName();
+            case PLACE: return "§cYou are not allowed to place §6" + itemKey.getName();
+            case PICKUP: return "§cYou are not allowed to pick up §6" + itemKey.getName();
+            case BREWING: return "§cYou are not allowed to brew §6" + itemKey.getName();
+            case CRAFTING: return "§cYou are not allowed to craft §6" + itemKey.getName();
+            case SMELTING: return  "§cYou are not allowed to smelt §6" + itemKey.getName();
+            case CREATIVE: return "§6" + itemKey.getName() + "§c cannot be used in creative";
+            default: return "§6" + itemKey.getName() + "§c is not allowed";
         }
     }
 }

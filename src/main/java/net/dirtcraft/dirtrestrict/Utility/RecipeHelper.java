@@ -31,6 +31,7 @@ public class RecipeHelper {
         List<IRecipe> craftingList = CraftingManager.getInstance().getRecipeList();
         craftingList.addAll(removedRecipes.get(key));
         removedRecipes.removeAll(key);
+
     }
 
     public void removeSmeltingRecipe(ItemKey key){

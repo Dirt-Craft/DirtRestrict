@@ -1,15 +1,12 @@
 package net.dirtcraft.dirtrestrict.Command;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Comparators;
-import com.google.common.collect.Multimap;
 import net.dirtcraft.dirtrestrict.Command.Editor.SubCommands.EditRestriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.ItemKey;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.Restriction;
 import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.Configuration.Permission;
+import net.dirtcraft.dirtrestrict.Configuration.RestrictionList;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
-import net.dirtcraft.dirtrestrict.Utility.Flipper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -38,50 +35,50 @@ public class BannedItemCommand implements CommandExecutor {
         return true;
     }
 
-    private void runCommandAsync(CommandSender sender, int pg){
+    private void runCommandAsync(CommandSender sender, int targetPage){
         try {
             if (!(sender instanceof Player)) return;
+            RestrictionList restrictionList = DirtRestrict.getInstance().getRestrictions();
             final int ENTRIES_PER_PAGE = 12;
             final Player player = (Player) sender;
             final boolean isStaff = player.hasPermission(Permission.PERMISSION_ADMIN);
             final boolean showAll = isStaff && DirtRestrict.getInstance().getPreferences().getPreferences(player).isShowHidden();
-            final Map<ItemKey, Restriction> restrictionMap = DirtRestrict.getInstance().getRestrictions().getRestrictions();
-            final Flipper<Character> mainColor = new Flipper<>('6', 'e');
-            final Flipper<Character> trimColor = new Flipper<>('3', 'b');
-            final Flipper<Character> lastColor = new Flipper<>('8', '7');
-            final Flipper<Character> hideColor = new Flipper<>('5', 'd');
-            SortedSet<ItemKey> list = new TreeSet<>(restrictionMap.keySet());
-            final Multimap<Integer, BaseComponent[]> entries = ArrayListMultimap.create();
-            AtomicInteger i = new AtomicInteger();
-            sender.sendMessage("§4§m====[§r §cDIRT§fCRAFT §4§m]=[§r §5BANNED ITEMS §4§m]====");
-            list.forEach(((itemKey) -> {
+            final List<ItemKey> list = showAll? restrictionList.getStaffView() : restrictionList.getPlayerView();
+            final Map<ItemKey, Restriction> restrictionMap = restrictionList.getRestrictions();
+            final ArrayList<BaseComponent[]> entries = new ArrayList<>();
+            boolean toggle = false;
+            int i = 0;
+
+            ListIterator<ItemKey> keyIter = list.listIterator(ENTRIES_PER_PAGE * targetPage);
+            while (keyIter.hasNext() && i++ < ENTRIES_PER_PAGE){
+                final ItemKey itemKey = keyIter.next();
                 final Restriction restriction = restrictionMap.get(itemKey);
-                final int page;
-                if (restriction.isHidden() && !showAll || (page = i.getAndIncrement() / ENTRIES_PER_PAGE) != pg) return;
-                final char hide = hideColor.get();
-                final char show = mainColor.get();
-                BaseComponent[] text = getRestrictionText(itemKey, restriction, restriction.isHidden()? hide : show, trimColor.get(), lastColor.get(), isStaff);
-                entries.put(page, text);
-            }));
-            final int pageMax = ((i.decrementAndGet()) / ENTRIES_PER_PAGE) + 1;
-            entries.get(pg).forEach(player.spigot()::sendMessage);
-            player.spigot().sendMessage(getPageFooter(pg+1, pageMax, "/banneditems"));
+                final char entry = restriction.isHidden()? toggle?'5':'d' : toggle?'6':'e';
+                final char reason = toggle ? '8' : '7';
+                final char trim = toggle ? '3' : 'b';
+                entries.add(getRestrictionText(itemKey, restriction, entry, trim, reason, isStaff));
+                toggle = !toggle;
+            }
+
+            sender.sendMessage("§4§m====[§r §cDIRT§fCRAFT §4§m]=[§r §5BANNED ITEMS §4§m]====");
+            entries.forEach(player.spigot()::sendMessage);
+            player.spigot().sendMessage(getPageFooter(targetPage+1, (list.size() / ENTRIES_PER_PAGE) + 1));
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private BaseComponent[] getPageFooter(int page, int max, String command){
+    private BaseComponent[] getPageFooter(int page, int max){
         final BaseComponent[] arr = new BaseComponent[5];
         final TextComponent tNext = new TextComponent(page < max? "§3§l»§4" : "§c§l»");
         final TextComponent tBack = new TextComponent(page > 1? "§3§l«§4" : "§c§l«");
         if (page < max){
             tNext.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to view the next page.")));
-            tNext.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (page + 1)));
+            tNext.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + ALIAS + " " + (page + 1)));
         }
         if (page > 1){
             tBack.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getMono("§3§nClick to view the previous page.")));
-            tBack.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (page - 1)));
+            tBack.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + ALIAS + " " + (page - 1)));
         }
         arr[0] = new TextComponent("§4§m=============[§4 ");
         arr[1] = tBack;

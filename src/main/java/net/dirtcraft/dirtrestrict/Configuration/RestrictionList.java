@@ -7,21 +7,33 @@ import net.dirtcraft.dirtrestrict.Configuration.DataTypes.RestrictionTypes;
 import net.dirtcraft.dirtrestrict.DirtRestrict;
 import org.bukkit.World;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>>{
+    List<ItemKey> staffView;
+    List<ItemKey> playerView;
+    AtomicBoolean regenSortedSet;
     @SuppressWarnings({"UnstableApiUsage"})
     public RestrictionList (DirtRestrict plugin){
         super(plugin, "Restrictions", new TypeToken<Map<ItemKey, Restriction>>(){}, new HashMap<>());
+        playerView = config.entrySet().stream()
+                .filter(s->!s.getValue().isHidden())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        staffView = new ArrayList<>(config.keySet());
+        playerView.sort(ItemKey::compareTo);
+        staffView.sort(ItemKey::compareTo);
+        regenSortedSet = new AtomicBoolean(false);
     }
 
     public boolean addBan(ItemKey item, String reason){
         if (config.containsKey(item)) return false;
         if (reason != null) config.put(item, new Restriction(reason));
         else config.put(item, new Restriction());
+        regenSortedSet.set(true);
         save();
         return true;
     }
@@ -45,6 +57,7 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
     public boolean revokeBan(ItemKey item){
         if (!config.containsKey(item)) return false;
         config.remove(item);
+        regenSortedSet.set(true);
         save();
         return true;
     }
@@ -54,6 +67,7 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
         Restriction restriction = config.get(key);
         config.remove(key);
         config.put(key.getAll(), restriction);
+        regenSortedSet.set(true);
         return true;
     }
 
@@ -108,6 +122,32 @@ public class RestrictionList extends ConfigurationBase<Map<ItemKey, Restriction>
 
     public Map<ItemKey, Restriction> getRestrictions(){
         return config;
+    }
+
+    public List<ItemKey> getStaffView(){
+        if (regenSortedSet.getAndSet(false)) {
+            playerView = config.entrySet().stream()
+                    .filter(s->!s.getValue().isHidden())
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            staffView = new ArrayList<>(config.keySet());
+            playerView.sort(ItemKey::compareTo);
+            staffView.sort(ItemKey::compareTo);
+        }
+        return staffView;
+    }
+
+    public List<ItemKey> getPlayerView(){
+        if (regenSortedSet.getAndSet(false)) {
+            playerView = config.entrySet().stream()
+                    .filter(s->!s.getValue().isHidden())
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            staffView = new ArrayList<>(config.keySet());
+            playerView.sort(ItemKey::compareTo);
+            staffView.sort(ItemKey::compareTo);
+        }
+        return playerView;
     }
 
 }
