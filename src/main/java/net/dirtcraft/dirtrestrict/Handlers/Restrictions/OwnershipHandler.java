@@ -146,7 +146,6 @@ public class OwnershipHandler extends RestrictionHandler {
 
         if (bannedInfo.isPresent()) {
             event.getItemDrop().remove();
-            p.setItemInHand(null);
 
             soundHandler.sendItemBreakSound(p);
             printMessage(p, RestrictionTypes.OWN, itemKey, bannedInfo.map(Restriction::getReason).orElse(null));
